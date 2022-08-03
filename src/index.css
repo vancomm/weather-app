@@ -1,5 +1,16 @@
+@font-face {
+  font-family: 'Rimouski';
+  src:
+    url('./assets/fonts/rimouski_sb-webfont.woff2') format('woff2'),
+    url('./assets/fonts/rimouski_sb-webfont.woff') format('woff'),
+    url('./assets/fonts/rimouski_sb-webfont.ttf') format('ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   margin: 0;
+  height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -10,4 +21,8 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+#root {
+  height: 100%;
 }
