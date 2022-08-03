@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/static/css/main.3038f7d6.css",
-    "main.js": "/static/js/main.3e9cdebc.js",
-    "static/js/787.d9312eb8.chunk.js": "/static/js/787.d9312eb8.chunk.js",
-    "static/media/rimouski_sb-webfont.ttf": "/static/media/rimouski_sb-webfont.ff3b5abeca1dd7212209.ttf",
-    "static/media/rimouski_sb-webfont.woff": "/static/media/rimouski_sb-webfont.2dd70b7073b217f55176.woff",
-    "static/media/rimouski_sb-webfont.woff2": "/static/media/rimouski_sb-webfont.69e1733e9893efec01cc.woff2",
-    "index.html": "/index.html",
-    "main.3038f7d6.css.map": "/static/css/main.3038f7d6.css.map",
-    "main.3e9cdebc.js.map": "/static/js/main.3e9cdebc.js.map",
-    "787.d9312eb8.chunk.js.map": "/static/js/787.d9312eb8.chunk.js.map"
+    "main.css": "/weather-app/static/css/main.67a11e01.css",
+    "main.js": "/weather-app/static/js/main.3fdf7c3f.js",
+    "static/js/787.d9312eb8.chunk.js": "/weather-app/static/js/787.d9312eb8.chunk.js",
+    "static/media/rimouski_sb-webfont.ttf": "/weather-app/static/media/rimouski_sb-webfont.ff3b5abeca1dd7212209.ttf",
+    "static/media/rimouski_sb-webfont.woff": "/weather-app/static/media/rimouski_sb-webfont.2dd70b7073b217f55176.woff",
+    "static/media/rimouski_sb-webfont.woff2": "/weather-app/static/media/rimouski_sb-webfont.69e1733e9893efec01cc.woff2",
+    "index.html": "/weather-app/index.html",
+    "main.67a11e01.css.map": "/weather-app/static/css/main.67a11e01.css.map",
+    "main.3fdf7c3f.js.map": "/weather-app/static/js/main.3fdf7c3f.js.map",
+    "787.d9312eb8.chunk.js.map": "/weather-app/static/js/787.d9312eb8.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3038f7d6.css",
-    "static/js/main.3e9cdebc.js"
+    "static/css/main.67a11e01.css",
+    "static/js/main.3fdf7c3f.js"
   ]
 }
