@@ -21,6 +21,7 @@ html {
 }
 
 .container {
+  position: relative;
   background-color: rgba(0, 71, 103, 0.3);
   height: fit-content;
   width: 400px;
@@ -30,6 +31,31 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.container.loading::after {
+  content: " ";
+  position: absolute;
+  display: block;
+  z-index: 90;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  top: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.spinner {
+  display: none;
+}
+
+.loading .spinner {
+  position: absolute;
+  display: block;
+  z-index: 100;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .title {

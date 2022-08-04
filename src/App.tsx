@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import cn from "classnames";
 import WeatherIcon from "./components/WeatherIcon";
+import { TailSpin } from "react-loader-spinner";
 import convertTemp from "./utils/convert-temp";
 import weatherRoute from "./routes";
 import "./assets/styles/wu-icons-style.css";
@@ -23,6 +25,8 @@ async function fetchWeather(
 }
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
   const [weatherIconId, setWeatherIconId] = useState<WeatherIconId>("unknown");
   const [temperature, setTemperature] = useState<Temperature>(null);
   const [units, setUnits] = useState<TemperatureUnit>("C");
@@ -44,6 +48,7 @@ export default function App() {
   useEffect(() => {
     if (!navigator.geolocation) {
       setNotification("Your browser does not support location services");
+      setIsLoading(false);
       return;
     }
 
@@ -57,18 +62,23 @@ export default function App() {
             setWeatherIconId(w);
             setDescription(d);
             setLocation(l === "" ? "Unknown location" : l);
+            setIsLoading(false);
           }
         );
       },
       () => {
         setNotification("Location access blocked");
+        setIsLoading(false);
       }
     );
   }, []);
 
   return (
     <div className="app">
-      <div className="container">
+      <div className={cn("container", { loading: isLoading })}>
+        <div className="spinner">
+          <TailSpin color="#ffffff" />
+        </div>
         <div className="title">Weather</div>
 
         <hr />
