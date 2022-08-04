@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import WeatherIcon from "./components/WeatherIcon";
 import convertTemp from "./utils/convert-temp";
 import weatherRoute from "./routes";
+import "./assets/styles/wu-icons-style.css";
 import "./App.css";
 
 export default function App() {
