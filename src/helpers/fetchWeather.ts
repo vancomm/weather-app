@@ -1,3 +1,4 @@
+import SunCalc from "suncalc";
 import { wttrInRoute } from "../routes";
 import { WttrInResponse } from "./WttrInResponse";
 
@@ -78,26 +79,43 @@ function codeToStatus(code: WwoCode): WeatherStatus {
   return descToStatus[codeToDesc[code]];
 }
 
+function getTimeOfDay(sunrise: Date, sunset: Date): Time {
+  const now = new Date();
+  if (sunset > sunrise) {
+    return now > sunrise && now < sunset ? "day" : "night";
+  }
+  return now > sunset && now < sunrise ? "night" : "day";
+}
+
 export default async function fetchWeather(
   lat: string,
   lon: string
-): Promise<Option<[Temperature, WeatherStatus, string, string]>> {
+): Promise<Option<[Temperature, Time, WeatherStatus, string, string]>> {
   const res = await fetch(wttrInRoute(lat, lon));
 
-  console.log(res);
   if (!res.ok) return null;
 
   const data: WttrInResponse = await res.json();
-  console.log(data);
 
   const { temp_C, weatherCode } = data.current_condition[0];
   const description = data.current_condition[0].weatherDesc[0].value;
+  const area = data.nearest_area[0].areaName[0].value;
   const region = data.nearest_area[0].region[0].value;
   const country = data.nearest_area[0].country[0].value;
 
   const temperature = parseInt(temp_C) as Temperature;
   const status = codeToStatus(weatherCode);
-  const location = `${region}, ${country}`;
+  const location = [area, region, country]
+    .filter((i) => i.length > 0)
+    .join(", ");
 
-  return [temperature, status, description, location];
+  const { sunrise, sunset } = SunCalc.getTimes(
+    new Date(),
+    parseFloat(lat),
+    parseFloat(lon)
+  );
+
+  const time = getTimeOfDay(sunrise, sunset);
+
+  return [temperature, time, status, description, location];
 }

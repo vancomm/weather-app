@@ -12,6 +12,7 @@ export default function App() {
 
   const [weatherStatus, setWeatherStatus] = useState<WeatherStatus>("unknown");
   const [temperature, setTemperature] = useState<Temperature>(null);
+  const [time, setTime] = useState<Time>("day");
   const [units, setUnits] = useState<TemperatureUnit>("C");
   const [description, setDescription] = useState("-");
   const [location, setLocation] = useState("-");
@@ -29,6 +30,10 @@ export default function App() {
   };
 
   useEffect(() => {
+    const setNight = () => {
+      document.querySelector("html")?.classList.add("night");
+    };
+
     if (!navigator.geolocation) {
       setNotification("Your browser does not support location services");
       setIsLoading(false);
@@ -40,20 +45,23 @@ export default function App() {
         const { latitude, longitude } = position.coords;
         const lat = latitude.toPrecision(4);
         const lon = longitude.toPrecision(4);
-        // console.log(lat, lon);
         fetchWeather(lat, lon).then((option) => {
           if (!option) {
             setNotification("Something went wrong");
             setIsLoading(false);
             return;
           }
-          const [t, w, d, l] = option;
+          const [tmp, t, w, d, l] = option;
+
           setUnits("C");
-          setTemperature(t);
+          setTemperature(tmp);
+          setTime(t);
           setWeatherStatus(w);
           setDescription(d);
           setLocation(l === "" ? "Unknown location" : l);
           setIsLoading(false);
+
+          if (t === "night") setNight();
         });
       },
       () => {
@@ -79,7 +87,7 @@ export default function App() {
           <WeatherIcon
             size="256"
             variant="white"
-            time="day"
+            time={time}
             status={weatherStatus}
           />
         </div>
