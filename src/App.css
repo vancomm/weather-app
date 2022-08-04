@@ -1,5 +1,6 @@
 html {
-  background: #138CE6;
+  background: linear-gradient(to bottom, #013ADF, #138CE6);
+  background-attachment: fixed;
 }
 
 *,
@@ -12,7 +13,6 @@ html {
 
 .app {
   height: 100%;
-  background: linear-gradient(to bottom, #013ADF, #138CE6);
   padding: 2rem 20px;
   display: flex;
   flex-direction: column;

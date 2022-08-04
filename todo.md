@@ -1,1 +1,3 @@
 - [ ] use wttr.in to fetch weather data
+- [ ] **add weather forecast**
+- [ ] fix location accuracy (?)
