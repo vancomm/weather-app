@@ -1,13 +1,3 @@
-@font-face {
-  font-family: 'Rimouski';
-  src:
-    url('./assets/fonts/rimouski_sb-webfont.woff2') format('woff2'),
-    url('./assets/fonts/rimouski_sb-webfont.woff') format('woff'),
-    url('./assets/fonts/rimouski_sb-webfont.ttf') format('ttf');
-  font-weight: normal;
-  font-style: normal;
-}
-
 body {
   margin: 0;
   height: 100vh;

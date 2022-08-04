@@ -1,24 +1,32 @@
+html {
+  background: #138CE6;
+}
+
 *,
 *::after,
 *::before {
   box-sizing: border-box;
-  font-family: "Rimouski";
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  color: white;
 }
 
 .app {
-  background-color: #293251;
   height: 100%;
-  display: flex;
-  justify-content: center;
+  background: linear-gradient(to bottom, #013ADF, #138CE6);
   padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
 .container {
-  background-color: white;
+  background-color: rgba(0, 71, 103, 0.3);
   height: fit-content;
-  width: fit-content;
-  padding: 1.5rem 0;
-  border-radius: 10px;
+  width: 400px;
+  max-width: calc(100% - 2rem);
+  padding: 1.5rem;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,13 +37,22 @@
   padding-bottom: 0.5rem;
 }
 
-.notification {
+hr {
+  --color: rgba(0, 179, 255, 0.8);
+  height: 1px;
   width: 100%;
-  background-color: #FADAD8;
-  color: #651410;
+  background-color: var(--color);
+  color: var(--color);
+  border: none;
+}
+
+.notification {
+  background-color: rgba(2, 33, 47, 0.3);
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem 0.3rem;
+  border-radius: 10px;
   font-size: 1.2rem;
   text-align: center;
-  padding: 1rem 15px;
 }
 
 .weather-container {
@@ -46,15 +63,51 @@
   gap: 1rem;
 }
 
+.weather-icon {
+  height: 220px;
+  overflow: hidden;
+}
+
+.weather-icon i {
+  transform: translateY(-18px);
+}
+
 .t-value {
   font-size: 4rem;
   cursor: pointer;
+  padding: 0.8rem 0.8rem 0;
+  border-radius: 10px;
+  transition: background-color 200ms ease;
+}
+
+.t-value:hover {
+  background-color: rgba(2, 33, 47, 0.3);
+  transition: background-color 150ms ease;
+}
+
+.t-value .units {
+  font-size: 3.9rem;
 }
 
 .t-desc {
   font-size: 2rem;
+  margin-bottom: 1rem;
 }
 
 .location {
   font-size: 1.4rem;
+  margin-top: 1rem;
+}
+
+.credits {
+  text-align: center;
+  color: rgba(184, 234, 255, 0.8);
+}
+
+a {
+  color: inherit;
+}
+
+a:hover {
+  color: white;
 }
