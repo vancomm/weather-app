@@ -16,7 +16,7 @@ export default function App() {
   const [time, setTime] = useState<Time>("day");
   const [units, setUnits] = useState<TemperatureUnit>("C");
   const [description, setDescription] = useState("-");
-  const [location, setLocation] = useState("-");
+  const [location, setLocation] = useState("Weather");
 
   const [moonPhase, setMoonPhase] = useState<MoonPhase>("Full Moon");
 
