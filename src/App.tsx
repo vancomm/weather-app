@@ -55,16 +55,17 @@ export default function App() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        fetchWeather(latitude.toString(10), longitude.toString(10)).then(
-          ([t, w, d, l]) => {
-            setUnits("C");
-            setTemperature(t);
-            setWeatherIconId(w);
-            setDescription(d);
-            setLocation(l === "" ? "Unknown location" : l);
-            setIsLoading(false);
-          }
-        );
+        const lat = latitude.toPrecision(4);
+        const lon = longitude.toPrecision(4);
+        console.log(lat, lon);
+        fetchWeather(lat, lon).then(([t, w, d, l]) => {
+          setUnits("C");
+          setTemperature(t);
+          setWeatherIconId(w);
+          setDescription(d);
+          setLocation(l === "" ? "Unknown location" : l);
+          setIsLoading(false);
+        });
       },
       () => {
         setNotification("Location access blocked");
