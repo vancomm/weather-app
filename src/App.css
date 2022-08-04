@@ -3,6 +3,10 @@ html {
   background-attachment: fixed;
 }
 
+html.night {
+  background: linear-gradient(to bottom, #02062e, #0d0e61);
+}
+
 *,
 *::after,
 *::before {
@@ -72,6 +76,15 @@ hr {
   border: none;
 }
 
+.night hr {
+  --color: rgba(255, 255, 255, 0.4);
+  height: 1px;
+  width: 100%;
+  background-color: var(--color);
+  color: var(--color);
+  border: none;
+}
+
 .notification {
   background-color: rgba(2, 33, 47, 0.3);
   margin-top: 0.5rem;
@@ -118,11 +131,13 @@ hr {
 .t-desc {
   font-size: 2rem;
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 .location {
   font-size: 1.4rem;
   margin-top: 1rem;
+  text-align: center;
 }
 
 .credits {

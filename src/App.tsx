@@ -3,32 +3,16 @@ import cn from "classnames";
 import WeatherIcon from "./components/WeatherIcon";
 import { TailSpin } from "react-loader-spinner";
 import convertTemp from "./utils/convert-temp";
-import weatherRoute from "./routes";
+import fetchWeather from "./helpers/fetchWeather";
 import "./assets/styles/wu-icons-style.css";
 import "./App.css";
-
-async function fetchWeather(
-  latitude: string,
-  longitude: string
-): Promise<[Temperature, WeatherIconId, string, string]> {
-  return fetch(weatherRoute(latitude, longitude))
-    .then((res) => res.json())
-    .then((data) => {
-      const temperature: Temperature = convertTemp(data.main.temp, "K", "C");
-      const weatherIconId: WeatherIconId = data.weather[0].icon;
-      const description: string = data.weather[0].description;
-      const location: string =
-        data.name + (data.sys.country ? ", " + data.sys.country : "");
-
-      return [temperature, weatherIconId, description, location];
-    });
-}
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
-  const [weatherIconId, setWeatherIconId] = useState<WeatherIconId>("unknown");
+  const [weatherStatus, setWeatherStatus] = useState<WeatherStatus>("unknown");
   const [temperature, setTemperature] = useState<Temperature>(null);
+  const [time, setTime] = useState<Time>("day");
   const [units, setUnits] = useState<TemperatureUnit>("C");
   const [description, setDescription] = useState("-");
   const [location, setLocation] = useState("-");
@@ -46,6 +30,10 @@ export default function App() {
   };
 
   useEffect(() => {
+    const setNight = () => {
+      document.querySelector("html")?.classList.add("night");
+    };
+
     if (!navigator.geolocation) {
       setNotification("Your browser does not support location services");
       setIsLoading(false);
@@ -57,14 +45,23 @@ export default function App() {
         const { latitude, longitude } = position.coords;
         const lat = latitude.toPrecision(4);
         const lon = longitude.toPrecision(4);
-        console.log(lat, lon);
-        fetchWeather(lat, lon).then(([t, w, d, l]) => {
+        fetchWeather(lat, lon).then((option) => {
+          if (!option) {
+            setNotification("Something went wrong");
+            setIsLoading(false);
+            return;
+          }
+          const [tmp, t, w, d, l] = option;
+
           setUnits("C");
-          setTemperature(t);
-          setWeatherIconId(w);
+          setTemperature(tmp);
+          setTime(t);
+          setWeatherStatus(w);
           setDescription(d);
           setLocation(l === "" ? "Unknown location" : l);
           setIsLoading(false);
+
+          if (t === "night") setNight();
         });
       },
       () => {
@@ -90,7 +87,8 @@ export default function App() {
           <WeatherIcon
             size="256"
             variant="white"
-            weatherIconId={weatherIconId}
+            time={time}
+            status={weatherStatus}
           />
         </div>
 
@@ -109,8 +107,7 @@ export default function App() {
       </div>
 
       <div className="credits">
-        Weather data provider:{" "}
-        <a href="https://openweathermap.org">openweathermap.org</a>
+        Weather data provider: <a href="https://wttr.in">wttr.in</a>
         <br />
         Icons by{" "}
         <a href="https://dribbble.com/shots/1879422-Weather-Underground-Icons">
