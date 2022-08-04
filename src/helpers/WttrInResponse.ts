@@ -64,7 +64,7 @@ export interface Weather {
 
 export interface Astronomy {
   moon_illumination: string;
-  moon_phase: string;
+  moon_phase: MoonPhase;
   moonrise: string;
   moonset: string;
   sunrise: string;

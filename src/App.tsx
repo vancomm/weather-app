@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import cn from "classnames";
-import WeatherIcon from "./components/WeatherIcon";
 import { TailSpin } from "react-loader-spinner";
-import convertTemp from "./utils/convert-temp";
+import WeatherIcon from "./components/WeatherIcon";
 import fetchWeather from "./helpers/fetchWeather";
+import { phaseToFavicon, statusToFavicon } from "./utils/maps";
+import convertTemp from "./utils/convert-temp";
 import "./assets/styles/wu-icons-style.css";
 import "./App.css";
 
@@ -16,6 +17,8 @@ export default function App() {
   const [units, setUnits] = useState<TemperatureUnit>("C");
   const [description, setDescription] = useState("-");
   const [location, setLocation] = useState("-");
+
+  const [moonPhase, setMoonPhase] = useState<MoonPhase>("Full Moon");
 
   const [notification, setNotification] = useState<Option<string>>();
 
@@ -51,7 +54,7 @@ export default function App() {
             setIsLoading(false);
             return;
           }
-          const [tmp, t, w, d, l] = option;
+          const [tmp, t, w, d, l, m] = option;
 
           setUnits("C");
           setTemperature(tmp);
@@ -59,6 +62,7 @@ export default function App() {
           setWeatherStatus(w);
           setDescription(d);
           setLocation(l === "" ? "Unknown location" : l);
+          setMoonPhase(m);
           setIsLoading(false);
 
           if (t === "night") setNight();
@@ -70,6 +74,27 @@ export default function App() {
       }
     );
   }, []);
+
+  useEffect(() => {
+    const icon =
+      time === "night" && weatherStatus === "sunny"
+        ? phaseToFavicon[moonPhase]
+        : statusToFavicon[weatherStatus];
+
+    const favicon16 = document.querySelector("link#favicon-16");
+    favicon16?.setAttribute(
+      "href",
+      `${process.env.PUBLIC_URL}/favicons/16/${icon}`
+    );
+    const favicon32 = document.querySelector("link#favicon-32");
+    favicon32?.setAttribute(
+      "href",
+      `${process.env.PUBLIC_URL}/favicons/32/${icon}`
+    );
+
+    const title = document.querySelector("title");
+    title!.innerText = location.split(",")[0];
+  }, [weatherStatus, location, moonPhase, time]);
 
   return (
     <div className="app">

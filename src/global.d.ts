@@ -28,28 +28,6 @@ type WeatherStatus =
 
 type Time = "day" | "night";
 
-type WeatherIconId =
-  | "01d"
-  | "01d"
-  | "01n"
-  | "02d"
-  | "02n"
-  | "03d"
-  | "03n"
-  | "04d"
-  | "04n"
-  | "09d"
-  | "09n"
-  | "10d"
-  | "10n"
-  | "11d"
-  | "11n"
-  | "13d"
-  | "13n"
-  | "50d"
-  | "50n"
-  | "unknown";
-
 type WwoCode =
   | "113"
   | "116"
@@ -120,3 +98,37 @@ type WeatherDesc =
   | "ThunderyShowers"
   | "ThunderySnowShowers"
   | "VeryCloudy";
+
+type MoonPhase =
+  | "New Moon"
+  | "Waxing Crescent"
+  | "First Quarter"
+  | "Waxing Gibbous"
+  | "Full Moon"
+  | "Waning Gibbous"
+  | "Last Quarter"
+  | "Waning Crescent";
+
+type Favicon =
+  | "Cloud.ico"
+  | "Cloud with Lightning and Rain.ico"
+  | "Cloud with Lightning.ico"
+  | "Cloud with Rain.ico"
+  | "Cloud with Snow.ico"
+  | "Fog.ico"
+  | "Snowflake.ico"
+  | "Sun Behind Cloud.ico"
+  | "Sun Behind Large Cloud.ico"
+  | "Sun Behind Rain Cloud.ico"
+  | "Sun Behind Small Cloud.ico"
+  | "Sun.ico"
+  | "Umbrella.ico"
+  | "Umbrella with Rain Drops.ico"
+  | "New Moon.ico"
+  | "Waxing Crescent Moon.ico"
+  | "First Quarter Moon.ico"
+  | "Waxing Gibbous Moon.ico"
+  | "Full Moon.ico"
+  | "Waning Gibbous Moon.ico"
+  | "Last Quarter Moon.ico"
+  | "Waning Crescent Moon.ico";
