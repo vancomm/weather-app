@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import cn from "classnames";
 import { TailSpin } from "react-loader-spinner";
 import WeatherIcon from "./components/WeatherIcon";
+import cn from "classnames";
 import fetchWeather from "./helpers/fetchWeather";
-import { phaseToFavicon, statusToFavicon } from "./utils/maps";
 import convertTemp from "./utils/convert-temp";
+import { phaseToFavicon, statusToFavicon } from "./utils/maps";
+import fetchLocation from "./helpers/fetchLocation";
 import "./assets/styles/wu-icons-style.css";
 import "./App.css";
 
@@ -46,27 +47,38 @@ export default function App() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        const lat = latitude.toPrecision(4);
-        const lon = longitude.toPrecision(4);
-        fetchWeather(lat, lon).then((option) => {
-          if (!option) {
-            setNotification("Something went wrong");
+
+        const lat = latitude.toString(10);
+        const lon = longitude.toString(10);
+
+        fetchLocation(lat, lon)
+          .then((option) => {
+            if (!option) throw new Error("Something went wrong");
+            return option;
+          })
+          .then(fetchWeather)
+          .then((option) => {
+            if (!option) throw new Error("Something went wrong");
+
+            const [tmp, t, w, d, l, m] = option;
+
+            setUnits("C");
+            setTemperature(tmp);
+            setTime(t);
+            setWeatherStatus(w);
+            setDescription(d);
+            setLocation(l === "" ? "Unknown location" : l);
+            setMoonPhase(m);
             setIsLoading(false);
-            return;
-          }
-          const [tmp, t, w, d, l, m] = option;
 
-          setUnits("C");
-          setTemperature(tmp);
-          setTime(t);
-          setWeatherStatus(w);
-          setDescription(d);
-          setLocation(l === "" ? "Unknown location" : l);
-          setMoonPhase(m);
-          setIsLoading(false);
-
-          if (t === "night") setNight();
-        });
+            if (t === "night") setNight();
+          })
+          .catch((e) => {
+            setNotification(e);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
       },
       () => {
         setNotification("Location access blocked");
