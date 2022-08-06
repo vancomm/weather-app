@@ -1,5 +1,29 @@
 type Option<T> = T | null;
 
+type Successful<T> = {
+  success: true;
+  value: T;
+};
+
+type Failed = {
+  success: false;
+  message: string;
+};
+
+type Optional<T> = Successful<T> | Failed;
+
+type LocationData = {
+  name: string;
+  time: TimeOfDay;
+};
+
+type WeatherData = {
+  temperature: Temperature;
+  status: WeatherStatus;
+  description: WeatherDesc;
+  moonPhase: MoonPhase;
+};
+
 type Temperature = Option<number>;
 
 type TemperatureUnit = "K" | "C" | "F";
@@ -26,7 +50,7 @@ type WeatherStatus =
   | "tstorms"
   | "unknown";
 
-type Time = "day" | "night";
+type TimeOfDay = "day" | "night";
 
 type WwoCode =
   | "113"

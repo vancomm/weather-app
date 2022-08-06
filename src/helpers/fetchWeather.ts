@@ -1,46 +1,37 @@
 import { altWttrInRoute } from "../routes";
 import { WttrInResponse } from "./WttrInResponse";
 import { descToStatus, codeToDesc } from "../utils/maps";
-import getTimeOfDay from "../utils/get-time-of-day";
+import { makeFailed, makeSuccessful, isSuccessful } from "../utils/optional";
 
 function codeToStatus(code: WwoCode): WeatherStatus {
   return descToStatus[codeToDesc[code]];
 }
 
-export default async function fetchWeather({
-  location,
-  sunrise,
-  sunset,
-}: {
-  location: string;
-  sunrise: Date;
-  sunset: Date;
-}): Promise<
-  Option<[Temperature, Time, WeatherStatus, string, string, MoonPhase]>
-> {
-  const res = await fetch(altWttrInRoute(location));
+export default async function fetchWeather(
+  option: Optional<{ name: string }>
+): Promise<Optional<WeatherData>> {
+  if (!isSuccessful(option)) return option;
+  const { name } = option.value;
+  const res = await fetch(altWttrInRoute(name));
 
-  if (!res.ok) return null;
+  console.log(res);
 
-  const data: WttrInResponse = await res.json();
+  if (!res.ok) return makeFailed("Could not fetch weather data");
 
-  // console.log(data);
+  try {
+    const data: WttrInResponse = await res.json();
 
-  const { temp_C, weatherCode } = data.current_condition[0];
-  const description = data.current_condition[0].weatherDesc[0].value;
-  // const area = data.nearest_area[0].areaName[0].value;
-  // const region = data.nearest_area[0].region[0].value;
-  // const country = data.nearest_area[0].country[0].value;
-  const moon = data.weather[0].astronomy[0].moon_phase;
+    const { temp_C, weatherCode } = data.current_condition[0];
+    const description = data.current_condition[0].weatherDesc[0].value;
+    const moonPhase = data.weather[0].astronomy[0].moon_phase;
 
-  const temperature = parseInt(temp_C) as Temperature;
-  const status = codeToStatus(weatherCode);
-  // const location = [area, region, country]
-  // const location = [region, country].filter((i) => i.length > 0).join(", ");
+    const temperature = parseInt(temp_C) as Temperature;
+    const status = codeToStatus(weatherCode);
 
-  const time = getTimeOfDay(sunrise, sunset);
-
-  return [temperature, time, status, description, location, moon];
+    return makeSuccessful({ temperature, status, description, moonPhase });
+  } catch (e) {
+    return makeFailed("Bad weather data");
+  }
 }
 
 // export default async function fetchWeather(

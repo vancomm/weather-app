@@ -6,6 +6,7 @@ import fetchWeather from "./helpers/fetchWeather";
 import convertTemp from "./utils/convert-temp";
 import { phaseToFavicon, statusToFavicon } from "./utils/maps";
 import fetchLocation from "./helpers/fetchLocation";
+import { isSuccessful } from "./utils/optional";
 import "./assets/styles/wu-icons-style.css";
 import "./App.css";
 
@@ -14,7 +15,7 @@ export default function App() {
 
   const [weatherStatus, setWeatherStatus] = useState<WeatherStatus>("unknown");
   const [temperature, setTemperature] = useState<Temperature>(null);
-  const [time, setTime] = useState<Time>("day");
+  const [time, setTime] = useState<TimeOfDay>("day");
   const [units, setUnits] = useState<TemperatureUnit>("C");
   const [description, setDescription] = useState("-");
   const [location, setLocation] = useState("Weather");
@@ -33,11 +34,11 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
-    const setNight = () => {
-      document.querySelector("html")?.classList.add("night");
-    };
+  const setNight = () => {
+    document.querySelector("html")?.classList.add("night");
+  };
 
+  useEffect(() => {
     if (!navigator.geolocation) {
       setNotification("Your browser does not support location services");
       setIsLoading(false);
@@ -48,35 +49,39 @@ export default function App() {
       (position) => {
         const { latitude, longitude } = position.coords;
 
-        const lat = latitude.toString(10);
-        const lon = longitude.toString(10);
-
-        fetchLocation(lat, lon)
+        fetchLocation(latitude.toString(10), longitude.toString(10))
           .then((option) => {
-            if (!option) throw new Error("Something went wrong");
+            if (!isSuccessful(option)) return option;
+            const { time, name } = option.value;
+            setTime(time);
+            if (time === "night") setNight();
+            setLocation(name === "" ? "Unknown location" : name);
             return option;
           })
           .then(fetchWeather)
           .then((option) => {
-            if (!option) throw new Error("Something went wrong");
+            if (!isSuccessful(option)) return option;
 
-            const [tmp, t, w, d, l, m] = option;
+            const {
+              temperature: tmp,
+              description: desc,
+              moonPhase: phase,
+              status,
+            } = option.value;
 
             setUnits("C");
             setTemperature(tmp);
-            setTime(t);
-            setWeatherStatus(w);
-            setDescription(d);
-            setLocation(l === "" ? "Unknown location" : l);
-            setMoonPhase(m);
+            setWeatherStatus(status);
+            setDescription(desc);
+            setMoonPhase(phase);
             setIsLoading(false);
 
-            if (t === "night") setNight();
+            return option;
           })
-          .catch((e) => {
-            setNotification(e);
-          })
-          .finally(() => {
+          .then((option) => {
+            if (!isSuccessful(option)) {
+              setNotification(option.message);
+            }
             setIsLoading(false);
           });
       },
