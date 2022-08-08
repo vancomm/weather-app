@@ -1,32 +1,10 @@
 type Option<T> = T | null;
 
-type Successful<T> = {
-  success: true;
-  value: T;
-};
-
-type Failed = {
-  success: false;
-  message: string;
-};
-
-type Optional<T> = Successful<T> | Failed;
-
-type LocationData = {
-  name: string;
-  time: TimeOfDay;
-};
-
-type WeatherData = {
-  temperature: Temperature;
-  status: WeatherStatus;
-  description: WeatherDesc;
-  moonPhase: MoonPhase;
-};
-
 type Temperature = Option<number>;
 
-type TemperatureUnit = "K" | "C" | "F";
+type TemperatureUnit = "C" | "F";
+
+type TimeOfDay = "day" | "night";
 
 type WeatherStatus =
   | "chanceflurries"
@@ -50,109 +28,58 @@ type WeatherStatus =
   | "tstorms"
   | "unknown";
 
-type TimeOfDay = "day" | "night";
-
-type WwoCode =
-  | "113"
-  | "116"
-  | "119"
-  | "122"
-  | "143"
-  | "176"
-  | "179"
-  | "182"
-  | "185"
-  | "200"
-  | "227"
-  | "230"
-  | "248"
-  | "260"
-  | "263"
-  | "266"
-  | "281"
-  | "284"
-  | "293"
-  | "296"
-  | "299"
-  | "302"
-  | "305"
-  | "308"
-  | "311"
-  | "314"
-  | "317"
-  | "320"
-  | "323"
-  | "326"
-  | "329"
-  | "332"
-  | "335"
-  | "338"
-  | "350"
-  | "353"
-  | "356"
-  | "359"
-  | "362"
-  | "365"
-  | "368"
-  | "371"
-  | "374"
-  | "377"
-  | "386"
-  | "389"
-  | "392"
-  | "395";
-
-type WeatherDesc =
-  | "Unknown"
-  | "Cloudy"
-  | "Fog"
-  | "HeavyRain"
-  | "HeavyShowers"
-  | "HeavySnow"
-  | "HeavySnowShowers"
-  | "LightRain"
-  | "LightShowers"
-  | "LightSleet"
-  | "LightSleetShowers"
-  | "LightSnow"
-  | "LightSnowShowers"
-  | "PartlyCloudy"
-  | "Sunny"
-  | "ThunderyHeavyRain"
-  | "ThunderyShowers"
-  | "ThunderySnowShowers"
-  | "VeryCloudy";
-
 type MoonPhase =
-  | "New Moon"
+  | "New"
   | "Waxing Crescent"
   | "First Quarter"
   | "Waxing Gibbous"
-  | "Full Moon"
+  | "Full"
   | "Waning Gibbous"
   | "Last Quarter"
   | "Waning Crescent";
 
 type Favicon =
-  | "Cloud.ico"
-  | "Cloud with Lightning and Rain.ico"
-  | "Cloud with Lightning.ico"
-  | "Cloud with Rain.ico"
-  | "Cloud with Snow.ico"
-  | "Fog.ico"
-  | "Snowflake.ico"
-  | "Sun Behind Cloud.ico"
-  | "Sun Behind Large Cloud.ico"
-  | "Sun Behind Rain Cloud.ico"
-  | "Sun Behind Small Cloud.ico"
-  | "Sun.ico"
-  | "Umbrella.ico"
-  | "Umbrella with Rain Drops.ico"
-  | "New Moon.ico"
-  | "Waxing Crescent Moon.ico"
-  | "First Quarter Moon.ico"
-  | "Waxing Gibbous Moon.ico"
-  | "Full Moon.ico"
-  | "Waning Gibbous Moon.ico"
-  | "Last Quarter Moon.ico"
-  | "Waning Crescent Moon.ico";
+  | "Cloud.png"
+  | "Cloud with Lightning and Rain.png"
+  | "Cloud with Lightning.png"
+  | "Cloud with Rain.png"
+  | "Cloud with Snow.png"
+  | "Fog.png"
+  | "Snowflake.png"
+  | "Sun Behind Cloud.png"
+  | "Sun Behind Large Cloud.png"
+  | "Sun Behind Rain Cloud.png"
+  | "Sun Behind Small Cloud.png"
+  | "Sun.png"
+  | "Umbrella.png"
+  | "Umbrella with Rain Drops.png"
+  | "New Moon.png"
+  | "Waxing Crescent Moon.png"
+  | "First Quarter Moon.png"
+  | "Waxing Gibbous Moon.png"
+  | "Full Moon.png"
+  | "Waning Gibbous Moon.png"
+  | "Last Quarter Moon.png"
+  | "Waning Crescent Moon.png";
+
+type WeatherIconId =
+  | "01d"
+  | "01d"
+  | "01n"
+  | "02d"
+  | "02n"
+  | "03d"
+  | "03n"
+  | "04d"
+  | "04n"
+  | "09d"
+  | "09n"
+  | "10d"
+  | "10n"
+  | "11d"
+  | "11n"
+  | "13d"
+  | "13n"
+  | "50d"
+  | "50n"
+  | "unknown";

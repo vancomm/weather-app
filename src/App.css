@@ -1,10 +1,42 @@
+:root {
+  --bg-start: #013ADF;
+  --bg-end: #138CE6;
+  --bg-container: rgba(0, 71, 103, 0.3);
+  --bg-loading: rgba(0, 0, 0, 0.5);
+  --font-primary: white;
+  --font-secondary: rgba(184, 234, 255, 0.8);
+  --precipitation: #62daff;
+  /* ^ This color is currently hardcoded into SVGs! */
+  --divider: rgba(0, 179, 255, 0.8);
+  --divider-night: rgba(255, 255, 255, 0.4);
+  --bg-container-overlay: rgba(2, 33, 47, 0.3);
+  --bg-container-overlay-night: rgba(255, 255, 255, 0.1);
+  --bg-start-night: #02062e;
+  --bg-end-night: #0d0e61;
+  --bg-container-night: rgba(0, 0, 0, 0.3);
+}
+
 html {
-  background: linear-gradient(to bottom, #013ADF, #138CE6);
+  min-height: 100%;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
   background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: -webkit-linear-gradient(var(--bg-start), var(--bg-end));
+  background-image: -moz-linear-gradient(var(--bg-start), var(--bg-end));
+  background-image: -ms-linear-gradient(var(--bg-start), var(--bg-end));
+  background-image: -o-linear-gradient(var(--bg-start), var(--bg-end));
+  background-image: linear-gradient(var(--bg-start), var(--bg-end));
 }
 
 html.night {
-  background: linear-gradient(to bottom, #02062e, #0d0e61);
+  background-image: -webkit-linear-gradient(var(--bg-start-night), var(--bg-end-night));
+  background-image: -moz-linear-gradient(var(--bg-start-night), var(--bg-end-night));
+  background-image: -ms-linear-gradient(var(--bg-start-night), var(--bg-end-night));
+  background-image: -o-linear-gradient(var(--bg-start-night), var(--bg-end-night));
+  background-image: linear-gradient(var(--bg-start-night), var(--bg-end-night));
 }
 
 *,
@@ -12,7 +44,7 @@ html.night {
 *::before {
   box-sizing: border-box;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  color: white;
+  color: var(--font-primary);
 }
 
 .app {
@@ -24,12 +56,14 @@ html.night {
   gap: 1rem;
 }
 
+
 .container {
   position: relative;
-  background-color: rgba(0, 71, 103, 0.3);
+  background: var(--bg-container);
   height: fit-content;
   width: 400px;
   max-width: 100%;
+  min-width: 280px;
   padding: 1.5rem;
   border-radius: 20px;
   display: flex;
@@ -38,7 +72,11 @@ html.night {
 }
 
 .night .container {
-  background-color: rgba(0, 0, 0, 0.3);
+  background: var(--bg-container-night);
+}
+
+.container.weather hr {
+  margin: 8px;
 }
 
 .container.loading::after {
@@ -50,7 +88,7 @@ html.night {
   width: 100%;
   border-radius: inherit;
   top: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--bg-loading);
 }
 
 .spinner {
@@ -72,25 +110,19 @@ html.night {
 }
 
 hr {
-  --color: rgba(0, 179, 255, 0.8);
-  height: 1px;
   width: 100%;
-  background-color: var(--color);
-  color: var(--color);
+  height: 1px;
+  margin: 0;
+  background-color: var(--divider);
   border: none;
 }
 
 .night hr {
-  --color: rgba(255, 255, 255, 0.4);
-  height: 1px;
-  width: 100%;
-  background-color: var(--color);
-  color: var(--color);
-  border: none;
+  background-color: var(--divider-night);
 }
 
 .notification {
-  background-color: rgba(2, 33, 47, 0.3);
+  background: var(--bg-container-overlay);
   margin-top: 0.5rem;
   padding: 0.5rem 1rem 0.3rem;
   border-radius: 10px;
@@ -99,27 +131,10 @@ hr {
 }
 
 .night .notification {
-  background-color: rgba(255, 255, 255, 0.1);
+  background: var(--bg-container-overlay-night);
 }
 
-.weather-container {
-  padding: 0 50px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
-
-.weather-icon {
-  height: 220px;
-  overflow: hidden;
-}
-
-.weather-icon i {
-  transform: translateY(-18px);
-}
-
-.t-value {
+.temperature {
   font-size: 4rem;
   cursor: pointer;
   padding: 0.8rem 0.8rem 0;
@@ -130,21 +145,25 @@ hr {
   overflow: hidden;
 }
 
-.t-value:hover {
-  background-color: rgba(2, 33, 47, 0.3);
+.temperature:hover {
+  background: var(--bg-container-overlay);
   transition: background-color 150ms ease;
 }
 
-.night .t-value:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  transition: background-color 150ms ease;
+.night .temperature:hover {
+  background: var(--bg-container-overlay-night);
 }
 
-.t-value .units {
+.temperature .units {
   font-size: 3.9rem;
 }
 
-.t-desc {
+.feels-like span {
+  font-size: 1.5rem;
+  color: var(--font-secondary);
+}
+
+.description {
   font-size: 2rem;
   margin-bottom: 1rem;
   text-align: center;
@@ -156,15 +175,59 @@ hr {
   text-align: center;
 }
 
-.credits {
-  text-align: center;
-  color: rgba(184, 234, 255, 0.8);
+.forecast {
+  gap: 5px;
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
 }
 
-a {
+.forecast .row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forecast .date {
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.forecast .weather-data {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.forecast .weather-icon {
+  width: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.forecast .weather-icon .pop {
+  color: var(--precipitation);
+  font-size: 0.8rem;
+}
+
+.forecast .temp-min .pop {
+  color: var(--font-secondary);
+}
+
+.credits {
+  padding-bottom: 1rem;
+  text-align: center;
+  color: var(--font-secondary);
+}
+
+.credits a {
   color: inherit;
 }
 
-a:hover {
-  color: white;
+.credits a:hover {
+  color: var(--font-primary);
 }

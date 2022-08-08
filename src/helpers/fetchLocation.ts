@@ -1,21 +1,19 @@
-import { OpenWeatherMapRoute } from "../routes";
-import { OpenWeatherMapResponse } from "./OpenWeatherMapResponse";
-import getTimeOfDay from "../utils/get-time-of-day";
-import { makeFailed, makeSuccessful } from "../utils/optional";
+import { openWeather } from "./routes";
+import { Optional, makeFailed, makeSuccessful } from "../utils/optional";
+import { LocationData } from "../utils/location-data";
+import { LocationResponse } from "./LocationResponse";
 
 export default async function fetchLocation(
-  latitude: string,
-  longitude: string
+  latitude: number,
+  longitude: number
 ): Promise<Optional<LocationData>> {
-  const res = await fetch(OpenWeatherMapRoute(latitude, longitude));
+  const res = await fetch(openWeather.locationRoute(latitude, longitude));
 
   if (!res.ok) return makeFailed("Could not determine location");
 
-  const data: OpenWeatherMapResponse = await res.json();
+  const data: LocationResponse = await res.json();
 
-  const { name } = data;
-  const { sunset, sunrise } = data.sys;
-  const time = getTimeOfDay(new Date(sunrise), new Date(sunset));
+  const { name, state, country } = data[0];
 
-  return makeSuccessful({ name, time });
+  return makeSuccessful({ name, state, country });
 }

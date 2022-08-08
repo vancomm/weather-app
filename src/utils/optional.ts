@@ -1,3 +1,15 @@
+export type Successful<T> = {
+  success: true;
+  value: T;
+};
+
+export type Failed = {
+  success: false;
+  message: string;
+};
+
+export type Optional<T> = Successful<T> | Failed;
+
 export function isSuccessful<T>(option: Optional<T>): option is Successful<T> {
   return option.success;
 }
