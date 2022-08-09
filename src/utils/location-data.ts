@@ -4,10 +4,11 @@ export interface LocationData {
   country: string;
 }
 
-export function locationToString(location: LocationData): string {
+export function formatLocationData(location: LocationData): string {
   const { name, state, country } = location;
   const unique = new Set([name, state, country]);
-  return [...unique.values()].join(", ");
+  const str = [...unique.values()].join(", ");
+  return str || "-";
 }
 
 export const defaultLocationData: LocationData = {

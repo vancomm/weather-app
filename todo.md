@@ -13,4 +13,4 @@
 - [x] use loading animation
   - [x] use a spinner 
   - [x] dim background
-  - [ ] use horizontal bars as text placeholder
+  - [x] use horizontal bars as text placeholder

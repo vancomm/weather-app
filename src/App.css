@@ -40,16 +40,6 @@ html.night {
   background-image: linear-gradient(var(--bg-start-night), var(--bg-end-night));
 }
 
-@keyframes fadein {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
 *,
 *::after,
 *::before {
@@ -58,10 +48,7 @@ html.night {
   color: var(--font-primary);
 }
 
-.container:not(.skeleton) p,
-.container:not(.skeleton) span {
-  animation: fadein 500ms;
-}
+
 
 .app {
   height: 100%;
@@ -72,9 +59,12 @@ html.night {
   gap: 1rem;
 }
 
+
+
+
 hr {
   width: 100%;
-  height: 2px;
+  height: 1px;
   margin: 0;
   background-color: var(--divider);
   border: none;
@@ -104,8 +94,19 @@ hr {
   background: var(--bg-container-night);
 }
 
-.container.weather hr {
-  margin: 8px;
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.container:not(.skeleton) p,
+.container:not(.skeleton) span {
+  animation: fadein 500ms;
 }
 
 .container.loading::after {
@@ -119,6 +120,8 @@ hr {
   top: 0;
   background: var(--bg-loading);
 }
+
+
 
 .spinner {
   display: none;
@@ -134,6 +137,10 @@ hr {
 }
 
 
+
+.weather hr {
+  margin: 8px;
+}
 
 .weather .title {
   font-size: 2.5rem;
@@ -205,33 +212,41 @@ hr {
 
 .forecast {
   gap: 5px;
-  padding-top: 0.7rem;
-  padding-bottom: 0.7rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.forecast .header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.forecast .header span {
+  color: var(--font-secondary);
+  font-variant: small-caps;
+  font-size: larger;
+  font-weight: bold;
+}
+
+.night .forecast .header span {
+  color: var(--font-secondary-night);
 }
 
 .forecast .row {
   width: 100%;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 48px 43px 43px;
+  column-gap: 0.5rem;
   align-items: center;
 }
 
 .forecast .date {
   font-size: x-large;
-  margin: 0;
-}
-
-.forecast .weather-data {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-weight: bold;
-  font-size: 1.2rem;
 }
 
 .forecast .weather-icon {
-  width: 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -240,10 +255,16 @@ hr {
 .forecast .weather-icon .pop {
   color: var(--precipitation);
   font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.forecast .temp {
+  text-align: center;
 }
 
 .forecast .temp .value {
-  font-size: larger;
+  font-weight: bold;
+  font-size: x-large;
 }
 
 .forecast .temp.min .value {

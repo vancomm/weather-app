@@ -2,21 +2,26 @@ import React, { useEffect, useState } from "react";
 import cn from "classnames";
 import Spinner from "./components/Spinner";
 import WeatherIcon from "./components/WeatherIcon";
+import CalendarIcon from "./components/CalendarIcon";
 import WeatherSkeleton from "./components/WeatherSkeleton";
+import ForecastSkeleton from "./components/ForecastPlaceholder";
 import fetchWeather from "./helpers/fetchWeather";
 import fetchLocation from "./helpers/fetchLocation";
 import fetchForecast from "./helpers/fetchForecast";
+import formatDate from "./utils/format-date";
 import getTimeOfDay from "./utils/get-time-of-day";
 import getMoonPhase from "./utils/get-moon-phase";
-import { LocationData } from "./utils/location-data";
-import convertTemperature from "./utils/convert-temperature";
-import { phaseToFavicon, statusToFavicon } from "./utils/maps";
+import formatTemperature from "./utils/format-temperature";
 import { isSuccessful, makeSuccessful } from "./utils/optional";
-import { defaultWeatherData, WeatherData } from "./utils/weather-data";
-import { defaultLocationData, locationToString } from "./utils/location-data";
-import { defaultForecastData, ForecastData } from "./utils/forecast-data";
+import { WeatherData, defaultWeatherData } from "./utils/weather-data";
+import { ForecastData, defaultForecastData } from "./utils/forecast-data";
+import { moonPhaseToFavicon, statusToFavicon } from "./utils/maps";
+import {
+  LocationData,
+  defaultLocationData,
+  formatLocationData,
+} from "./utils/location-data";
 import "./App.css";
-import ForecastSkeleton from "./components/ForecastPlaceholder";
 
 export default function App() {
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("day");
@@ -38,14 +43,6 @@ export default function App() {
 
   const swapUnits = () => {
     setUnits(units === "C" ? "F" : "C");
-  };
-
-  const formatDate = (date: Option<Date>) => {
-    if (!date) return "No data";
-    const today = new Date();
-    return date.getDate() === today.getDate()
-      ? "Today"
-      : date.toLocaleDateString(undefined, { weekday: "short" });
   };
 
   useEffect(() => {
@@ -115,7 +112,7 @@ export default function App() {
 
     const icon =
       timeOfDay === "night" && weatherData.status === "sunny"
-        ? phaseToFavicon[moonPhase]
+        ? moonPhaseToFavicon[moonPhase]
         : statusToFavicon[weatherData.status];
 
     title!.innerText = location.name === "" ? "Weather" : location.name;
@@ -164,21 +161,16 @@ export default function App() {
 
           <div className="temperature" onClick={swapUnits}>
             <span className="value">
-              {weatherData.temperature
-                ? convertTemperature(weatherData.temperature, units)
-                : "-"}
-              °
+              {formatTemperature(weatherData.temperature, units)}
+              {"°"}
             </span>
             <span className="units">{units}</span>
           </div>
 
           <div className="feels-like">
             <span className="value">
-              feels like{" "}
-              {weatherData.feelsLike
-                ? convertTemperature(weatherData.feelsLike, units)
-                : "-"}
-              °
+              feels like {formatTemperature(weatherData.feelsLike, units)}
+              {"°"}
             </span>
             <span className="units">{units}</span>
           </div>
@@ -190,7 +182,7 @@ export default function App() {
           <hr />
 
           <div className="location">
-            <span>{locationToString(location) || "-"}</span>
+            <span>{formatLocationData(location)}</span>
           </div>
         </div>
       )}
@@ -199,42 +191,47 @@ export default function App() {
         <ForecastSkeleton timeOfDay={timeOfDay} />
       ) : (
         <div className={cn("container forecast", { loading: isLoading })}>
+          <div className="header">
+            <CalendarIcon width="18px" height="16px" />
+            <span>forecast</span>
+          </div>
+          <hr />
           {forecastData.map(({ date, status, tempMin, tempMax, pop }, i) => (
-            <React.Fragment key={i}>
+            <React.Fragment key={date?.getDate() || i}>
               {i > 0 && <hr />}
               <div className="row">
-                <p className="date">{formatDate(date)}</p>
-                <div className="weather-data">
-                  <div className="weather-icon">
-                    {/(rain)|(snow)|(storm)/.test(status) ? (
-                      <>
-                        <WeatherIcon
-                          size={32}
-                          variant="white"
-                          status={status}
-                          time={timeOfDay}
-                        />
-                        <span className="pop">{pop * 100}%</span>
-                      </>
-                    ) : (
+                <span className="date">{formatDate(date)}</span>
+                <div className="weather-icon">
+                  {/(rain)|(snow)|(storm)/.test(status) ? (
+                    <>
                       <WeatherIcon
-                        size={48}
+                        size={32}
                         variant="white"
                         status={status}
                         time={timeOfDay}
                       />
-                    )}
-                  </div>
-                  <div className="temp max">
-                    <span className="value">
-                      {tempMax ? convertTemperature(tempMax, units) : "-"}°
-                    </span>
-                  </div>
-                  <div className="temp min">
-                    <span className="value">
-                      {tempMin ? convertTemperature(tempMin, units) : "-"}°
-                    </span>
-                  </div>
+                      <span className="pop">{Math.round(pop * 100)}%</span>
+                    </>
+                  ) : (
+                    <WeatherIcon
+                      size={48}
+                      variant="white"
+                      status={status}
+                      time={timeOfDay}
+                    />
+                  )}
+                </div>
+                <div className="temp max">
+                  <span className="value">
+                    {formatTemperature(tempMax, units)}
+                    {"°"}
+                  </span>
+                </div>
+                <div className="temp min">
+                  <span className="value">
+                    {formatTemperature(tempMin, units)}
+                    {"°"}
+                  </span>
                 </div>
               </div>
             </React.Fragment>

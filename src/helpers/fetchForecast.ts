@@ -16,13 +16,14 @@ export default async function fetchForecast(
 
   const { list } = data;
 
-  const value = [...Array(4).keys()].map((i) => {
+  const value = [...Array(data.cnt / 8 + 1).keys()].map((i) => {
     const date = new Date();
     date.setDate(date.getDate() + i);
     const dayData = list.filter((i) => {
       const dt = new Date(i.dt * 1000);
       return dt.getDate() === date.getDate();
     });
+    console.log(dayData);
     const pop = dayData.map((i) => i.pop).sort((a, b) => b - a)[0];
     const tempMin = dayData.map((i) => i.main.temp).sort((a, b) => a - b)[0];
     const tempMax = dayData.map((i) => i.main.temp).sort((a, b) => b - a)[0];

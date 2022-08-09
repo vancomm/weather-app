@@ -1,0 +1,25 @@
+<svg width="248" height="217" viewBox="0 0 248 217" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+  .path {
+    fill: var(--font-secondary);
+  }
+
+  .night .path {
+    fill: var(--font-secondary-night);
+  }
+</style>
+<path class="path" fill-rule="evenodd" clip-rule="evenodd" d="M36 0C16.1177 0 0 16.1178 0 36V181C0 200.882 16.1177 217 36 217H212C231.882 217 248 200.882 248 181V36C248 16.1178 231.882 0 212 0H36ZM41 52C28.2975 52 18 62.2975 18 75V174C18 186.703 28.2975 197 41 197H207C219.703 197 230 186.703 230 174V75C230 62.2975 219.703 52 207 52H41Z" />
+<circle class="path" cx="85" cy="82" r="12"/>
+<circle class="path" cx="201" cy="82" r="12"/>
+<circle class="path" cx="124" cy="82" r="12"/>
+<circle class="path" cx="163" cy="82" r="12"/>
+<circle class="path" cx="46" cy="123" r="12"/>
+<circle class="path" cx="85" cy="123" r="12"/>
+<circle class="path" cx="201" cy="123" r="12"/>
+<circle class="path" cx="124" cy="123" r="12"/>
+<circle class="path" cx="163" cy="123" r="12"/>
+<circle class="path" cx="46" cy="164" r="12"/>
+<circle class="path" cx="85" cy="164" r="12"/>
+<circle class="path" cx="124" cy="164" r="12"/>
+<circle class="path" cx="163" cy="164" r="12"/>
+</svg>

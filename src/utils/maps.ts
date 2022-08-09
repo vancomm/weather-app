@@ -21,7 +21,7 @@ export const statusToFavicon: Record<WeatherStatus, Favicon> = {
   unknown: "Umbrella.png",
 };
 
-export const phaseToFavicon: Record<MoonPhase, Favicon> = {
+export const moonPhaseToFavicon: Record<MoonPhase, Favicon> = {
   New: "New Moon.png",
   "Waxing Crescent": "Waxing Crescent Moon.png",
   "First Quarter": "First Quarter Moon.png",
