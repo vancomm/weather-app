@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import cn from "classnames";
-import Spinner from "./components/Spinner";
 import WeatherIcon from "./components/WeatherIcon";
 import CalendarIcon from "./components/CalendarIcon";
 import WeatherSkeleton from "./components/WeatherSkeleton";
@@ -22,6 +20,7 @@ import {
   formatLocationData,
 } from "./utils/location-data";
 import "./App.css";
+import useClickPreventionOnDoubleClick from "./hooks/use-click-prevention-on-double-click";
 
 export default function App() {
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("day");
@@ -45,6 +44,18 @@ export default function App() {
     setUnits(units === "C" ? "F" : "C");
   };
 
+  const copyTemperature = () => {
+    navigator.clipboard.writeText(
+      `${formatTemperature(weatherData.temperature, units)}°${units}`
+    );
+  };
+
+  const [handleClick, handleDoubleClick] = useClickPreventionOnDoubleClick(
+    swapUnits,
+    copyTemperature,
+    150
+  );
+
   useEffect(() => {
     if (!navigator.geolocation) {
       setNotification("Your browser does not support location services");
@@ -59,10 +70,10 @@ export default function App() {
 
         const timeOfDay = getTimeOfDay(latitude, longitude);
 
-        console.log(timeOfDay);
-
         setTimeOfDay(timeOfDay);
         setMoonPhase(moonPhase);
+
+        setIsLoading(true);
 
         fetchLocation(latitude, longitude)
           .then((option) => {
@@ -142,8 +153,7 @@ export default function App() {
       {isLoading ? (
         <WeatherSkeleton timeOfDay={timeOfDay} />
       ) : (
-        <div className={cn("container weather", { loading: isLoading })}>
-          <Spinner />
+        <div className="container weather">
           <div className="title">Weather</div>
 
           <hr />
@@ -159,7 +169,11 @@ export default function App() {
             />
           </div>
 
-          <div className="temperature" onClick={swapUnits}>
+          <div
+            className="temperature"
+            onClick={handleClick}
+            onDoubleClick={handleDoubleClick}
+          >
             <span className="value">
               {formatTemperature(weatherData.temperature, units)}
               {"°"}
@@ -190,7 +204,7 @@ export default function App() {
       {isLoading ? (
         <ForecastSkeleton timeOfDay={timeOfDay} />
       ) : (
-        <div className={cn("container forecast", { loading: isLoading })}>
+        <div className="container forecast">
           <div className="header">
             <CalendarIcon width="18px" height="16px" />
             <span>forecast</span>

@@ -94,6 +94,20 @@ hr {
   background: var(--bg-container-night);
 }
 
+.container .header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.container .header span {
+  color: var(--font-secondary);
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
 @keyframes fadein {
   0% {
     opacity: 0;
@@ -168,6 +182,7 @@ hr {
   transition: background-color 200ms ease;
   height: 5rem;
   overflow: hidden;
+  user-select: none;
 }
 
 .weather:not(.skeleton) .temperature:hover {
@@ -214,20 +229,6 @@ hr {
   gap: 5px;
   padding-top: 1rem;
   padding-bottom: 1rem;
-}
-
-.forecast .header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-}
-
-.forecast .header span {
-  color: var(--font-secondary);
-  font-variant: small-caps;
-  font-size: larger;
-  font-weight: bold;
 }
 
 .night .forecast .header span {
