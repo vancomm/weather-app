@@ -1,0 +1,34 @@
+.placeholder {
+  --ph-primary: rgba(184, 234, 255, 0.8);
+  --ph-secondary: rgba(255, 255, 255, 0.45);
+  --ph-primary-night: rgba(255, 255, 255, 0.45);
+  --ph-secondary-night: rgba(255, 255, 255, 0.3);
+  width: var(--ph-width);
+  height: var(--ph-height);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+@keyframes placeholder-shimmer {
+  0% {
+    background-position: -468px 0
+  }
+
+  100% {
+    background-position: 468px 0
+  }
+}
+
+.bg-animation {
+  height: inherit;
+  animation: 1.25s placeholder-shimmer infinite forwards linear;
+  background: linear-gradient(to right, var(--ph-secondary) 10%, var(--ph-primary) 18%, var(--ph-secondary) 33%);
+  background-size: 800px 104px;
+}
+
+.night .bg-animation {
+  height: inherit;
+  animation: 1.25s placeholder-shimmer infinite forwards linear;
+  background: linear-gradient(to right, var(--ph-secondary-night) 10%, var(--ph-primary-night) 18%, var(--ph-secondary-night) 33%);
+  background-size: 800px 104px;
+}

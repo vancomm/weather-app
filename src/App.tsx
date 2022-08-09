@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import cn from "classnames";
 import Spinner from "./components/Spinner";
 import WeatherIcon from "./components/WeatherIcon";
+import WeatherSkeleton from "./components/WeatherSkeleton";
 import fetchWeather from "./helpers/fetchWeather";
 import fetchLocation from "./helpers/fetchLocation";
 import fetchForecast from "./helpers/fetchForecast";
@@ -15,6 +16,7 @@ import { defaultWeatherData, WeatherData } from "./utils/weather-data";
 import { defaultLocationData, locationToString } from "./utils/location-data";
 import { defaultForecastData, ForecastData } from "./utils/forecast-data";
 import "./App.css";
+import ForecastSkeleton from "./components/ForecastPlaceholder";
 
 export default function App() {
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("day");
@@ -29,7 +31,7 @@ export default function App() {
     Array(4).fill(defaultForecastData)
   );
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [units, setUnits] = useState<TemperatureUnit>("C");
 
   const [notification, setNotification] = useState<Option<string>>();
@@ -60,12 +62,10 @@ export default function App() {
 
         const timeOfDay = getTimeOfDay(latitude, longitude);
 
+        console.log(timeOfDay);
+
         setTimeOfDay(timeOfDay);
         setMoonPhase(moonPhase);
-
-        setIsLoading(true);
-
-        // fetchForecast(latitude, longitude);
 
         fetchLocation(latitude, longitude)
           .then((option) => {
@@ -142,96 +142,105 @@ export default function App() {
 
   return (
     <div className="app">
-      <div className={cn("container weather", { loading: isLoading })}>
-        <Spinner />
-        <div className="title">Weather</div>
+      {isLoading ? (
+        <WeatherSkeleton timeOfDay={timeOfDay} />
+      ) : (
+        <div className={cn("container weather", { loading: isLoading })}>
+          <Spinner />
+          <div className="title">Weather</div>
 
-        <hr />
+          <hr />
 
-        {notification && <div className="notification">{notification}</div>}
+          {notification && <div className="notification">{notification}</div>}
 
-        <div className="weather-icon">
-          <WeatherIcon
-            size={256}
-            variant="white"
-            time={timeOfDay}
-            status={weatherData.status}
-          />
+          <div className="weather-icon">
+            <WeatherIcon
+              size={256}
+              variant="white"
+              time={timeOfDay}
+              status={weatherData.status}
+            />
+          </div>
+
+          <div className="temperature" onClick={swapUnits}>
+            <span className="value">
+              {weatherData.temperature
+                ? convertTemperature(weatherData.temperature, units)
+                : "-"}
+              °
+            </span>
+            <span className="units">{units}</span>
+          </div>
+
+          <div className="feels-like">
+            <span className="value">
+              feels like{" "}
+              {weatherData.feelsLike
+                ? convertTemperature(weatherData.feelsLike, units)
+                : "-"}
+              °
+            </span>
+            <span className="units">{units}</span>
+          </div>
+
+          <div className="description">
+            <span>{weatherData.description}</span>
+          </div>
+
+          <hr />
+
+          <div className="location">
+            <span>{locationToString(location) || "-"}</span>
+          </div>
         </div>
+      )}
 
-        <div className="temperature" onClick={swapUnits}>
-          <span className="value">
-            {weatherData.temperature
-              ? convertTemperature(weatherData.temperature, units)
-              : "-"}
-            °
-          </span>
-          <span className="units">{units}</span>
-        </div>
-
-        <div className="feels-like">
-          <span className="value">
-            feels like{" "}
-            {weatherData.feelsLike
-              ? convertTemperature(weatherData.feelsLike, units)
-              : "-"}
-            °
-          </span>
-          <span className="units">{units}</span>
-        </div>
-
-        <div className="description">{weatherData.description}</div>
-
-        <hr />
-
-        <div className="location">{locationToString(location) || "-"}</div>
-      </div>
-
-      <div className={cn("container forecast", { loading: isLoading })}>
-        <Spinner />
-        {forecastData.map(({ date, status, tempMin, tempMax, pop }, i) => (
-          <React.Fragment key={i}>
-            {i > 0 && <hr />}
-            <div className="row">
-              <p className="date">{formatDate(date)}</p>
-              <div className="weather-data">
-                <div className="weather-icon">
-                  {/(rain)|(snow)|(storm)/.test(status) ? (
-                    <>
+      {isLoading ? (
+        <ForecastSkeleton timeOfDay={timeOfDay} />
+      ) : (
+        <div className={cn("container forecast", { loading: isLoading })}>
+          {forecastData.map(({ date, status, tempMin, tempMax, pop }, i) => (
+            <React.Fragment key={i}>
+              {i > 0 && <hr />}
+              <div className="row">
+                <p className="date">{formatDate(date)}</p>
+                <div className="weather-data">
+                  <div className="weather-icon">
+                    {/(rain)|(snow)|(storm)/.test(status) ? (
+                      <>
+                        <WeatherIcon
+                          size={32}
+                          variant="white"
+                          status={status}
+                          time={timeOfDay}
+                        />
+                        <span className="pop">{pop * 100}%</span>
+                      </>
+                    ) : (
                       <WeatherIcon
-                        size={32}
+                        size={48}
                         variant="white"
                         status={status}
-                        time="day"
+                        time={timeOfDay}
                       />
-                      <span className="pop">{pop * 100}%</span>
-                    </>
-                  ) : (
-                    <WeatherIcon
-                      size={48}
-                      variant="white"
-                      status={status}
-                      time="day"
-                    />
-                  )}
+                    )}
+                  </div>
+                  <div className="temp max">
+                    <span className="value">
+                      {tempMax ? convertTemperature(tempMax, units) : "-"}°
+                    </span>
+                  </div>
+                  <div className="temp min">
+                    <span className="value">
+                      {tempMin ? convertTemperature(tempMin, units) : "-"}°
+                    </span>
+                  </div>
                 </div>
-                {/* <div className="temps"> */}
-                <div className="temp-max">
-                  <span className="value">
-                    {tempMax ? convertTemperature(tempMax, units) : "-"}
-                  </span>
-                </div>
-                <div className="temp-min">
-                  <span className="value">
-                    {tempMin ? convertTemperature(tempMin, units) : "-"}
-                  </span>
-                </div>
-                {/* </div> */}
               </div>
-            </div>
-          </React.Fragment>
-        ))}
-      </div>
+            </React.Fragment>
+          ))}
+        </div>
+      )}
 
       <div className="credits">
         Weather data provider:{" "}

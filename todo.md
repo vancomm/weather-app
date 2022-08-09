@@ -1,5 +1,16 @@
-- [x] use openweathermap to fetch current location
-
-- [x] use wttr.in to fetch weather data
-
-  
+- [x] fetch location name
+- [x] fetch current weather data
+  - [x] show current weather status
+    - [x] show icon
+    - [x] show description
+  - [x] show current T
+  - [x] show feels like T
+- [x] fetch forecast data
+  - [x] show min and max T
+  - [x] show weather status
+    - [x] use priority mapping to determine which weather status to show
+    - [x] show probability of precipitation where needed
+- [x] use loading animation
+  - [x] use a spinner 
+  - [x] dim background
+  - [ ] use horizontal bars as text placeholder
