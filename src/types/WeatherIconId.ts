@@ -1,4 +1,4 @@
-type WeatherIconId =
+export type WeatherIconId =
   | "01d"
   | "01d"
   | "01n"
@@ -19,5 +19,3 @@ type WeatherIconId =
   | "50d"
   | "50n"
   | "unknown";
-
-export default WeatherIconId;

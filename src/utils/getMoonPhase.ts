@@ -11,8 +11,6 @@
  *  https://gist.github.com/EricHech
  */
 
-export type MoonPhase = typeof MOON_PHASE_NAMES[number];
-
 export const MOON_ICONS = [
   "🌑",
   "🌒",
@@ -49,7 +47,7 @@ export const DAYS_PER_MONTH = 30.6;
 export const NEW_MOON_REFERENCE = 694039.09;
 
 // Ported from `http://www.voidware.com/moon_phase.htm`.
-export const getMoonPhase = (date: Date = new Date()) => {
+export default function getMoonPhase(date: Date = new Date()) {
   let year = date.getFullYear();
   let month = date.getMonth() + 1;
   const day = date.getDate();
@@ -79,4 +77,4 @@ export const getMoonPhase = (date: Date = new Date()) => {
   if (!MOON_PHASE_NAMES[phase]) throw new Error(`Invalid moon phase: ${phase}`);
 
   return { lunarDay, name: MOON_PHASE_NAMES[phase], icon: MOON_ICONS[phase] };
-};
+}

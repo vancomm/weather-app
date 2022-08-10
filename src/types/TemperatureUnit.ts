@@ -1,3 +1,1 @@
-type TemperatureUnit = "C" | "F";
-
-export default TemperatureUnit;
+export type TemperatureUnit = "C" | "F";

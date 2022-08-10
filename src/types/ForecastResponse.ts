@@ -1,6 +1,6 @@
-import WeatherIconId from "./WeatherIconId";
+import { WeatherIconId } from "./WeatherIconId";
 
-export default interface ForecastResponse {
+export interface ForecastResponse {
   cod: string;
   message: number;
   cnt: number;

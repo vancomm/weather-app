@@ -1,5 +1,5 @@
 import { openWeather } from "./routes";
-import { iconIdMap, statusPriority } from "../utils/constants";
+import { iconIdToTimeAndStatus, statusPriority } from "../utils/constants";
 import {
   makeFailed,
   makeSuccessful,
@@ -33,7 +33,7 @@ export default async function fetchForecast(
     const status = dayData
       .map((i) => {
         const { icon } = i.weather[0];
-        const [, status] = iconIdMap[icon];
+        const [, status] = iconIdToTimeAndStatus[icon];
         return status;
       })
       .sort((a, b) => statusPriority[a] - statusPriority[b])[0];

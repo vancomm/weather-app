@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
+
 import WeatherIcon from "./components/WeatherIcon";
 import CalendarIcon from "./components/CalendarIcon";
 import WeatherSkeleton from "./components/WeatherSkeleton";
 import ForecastSkeleton from "./components/ForecastPlaceholder";
+
 import fetchWeather from "./helpers/fetchWeather";
 import fetchLocation from "./helpers/fetchLocation";
 import fetchForecast from "./helpers/fetchForecast";
+
 import isDev from "./utils/isDev";
 import formatDate from "./utils/formatDate";
 import getTimeOfDay from "./utils/getTimeOfDay";
+import getMoonPhase from "./utils/getMoonPhase";
 import formatTemperature from "./utils/formatTemperature";
 import formatLocationData from "./utils/formatLocationData";
-import { getMoonPhase, MoonPhase } from "./utils/getMoonPhase";
 import { moonPhaseToFavicon, statusToFavicon } from "./utils/constants";
+
 import {
   TimeOfDay,
   WeatherData,
@@ -21,7 +25,9 @@ import {
   TemperatureUnit,
   isSuccessful,
   makeSuccessful,
+  MoonPhase,
 } from "./types";
+
 import "./App.css";
 
 export default function App() {

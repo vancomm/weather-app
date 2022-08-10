@@ -1,6 +1,6 @@
-import WeatherIconId from "./WeatherIconId";
+import { WeatherIconId } from "./WeatherIconId";
 
-export default interface WeatherResponse {
+export interface WeatherResponse {
   coord: Coord;
   weather: Weather[];
   base: string;

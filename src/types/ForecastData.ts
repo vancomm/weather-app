@@ -1,6 +1,6 @@
-import WeatherStatus from "./WeatherStatus";
+import { WeatherStatus } from "./WeatherStatus";
 
-export default interface ForecastData {
+export interface ForecastData {
   date: Date;
   tempMin: number;
   tempMax: number;

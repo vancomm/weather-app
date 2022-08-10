@@ -1,3 +1,1 @@
-type Maybe<T> = T | undefined;
-
-export default Maybe;
+export type Maybe<T> = T | undefined;

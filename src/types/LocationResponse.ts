@@ -1,6 +1,4 @@
-type LocationResponse = LocationProperties[];
-
-export default LocationResponse;
+export type LocationResponse = LocationProperties[];
 
 type LocationProperties = {
   name: string;

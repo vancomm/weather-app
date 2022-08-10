@@ -1,4 +1,4 @@
-type WeatherStatus =
+export type WeatherStatus =
   | "chanceflurries"
   | "chancerain"
   | "chancesleet"
@@ -19,5 +19,3 @@ type WeatherStatus =
   | "sunny"
   | "tstorms"
   | "unknown";
-
-export default WeatherStatus;

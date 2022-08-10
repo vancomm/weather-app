@@ -1,33 +1,12 @@
-import WeatherStatus from "../types/WeatherStatus";
-import { MoonPhase } from "./getMoonPhase";
-import WeatherIconId from "../types/WeatherIconId";
-import TimeOfDay from "../types/TimeOfDay";
+import {
+  WeatherIconId,
+  WeatherStatus,
+  TimeOfDay,
+  Favicon,
+  MoonPhase,
+} from "../types";
 
-type Favicon =
-  | "Cloud.png"
-  | "Cloud with Lightning and Rain.png"
-  | "Cloud with Lightning.png"
-  | "Cloud with Rain.png"
-  | "Cloud with Snow.png"
-  | "Fog.png"
-  | "Snowflake.png"
-  | "Sun Behind Cloud.png"
-  | "Sun Behind Large Cloud.png"
-  | "Sun Behind Rain Cloud.png"
-  | "Sun Behind Small Cloud.png"
-  | "Sun.png"
-  | "Umbrella.png"
-  | "Umbrella with Rain Drops.png"
-  | "New Moon.png"
-  | "Waxing Crescent Moon.png"
-  | "First Quarter Moon.png"
-  | "Waxing Gibbous Moon.png"
-  | "Full Moon.png"
-  | "Waning Gibbous Moon.png"
-  | "Last Quarter Moon.png"
-  | "Waning Crescent Moon.png";
-
-export const statusToFavicon: Record<WeatherStatus, Favicon> = {
+export const statusToFavicon: Readonly<Record<WeatherStatus, Favicon>> = {
   chanceflurries: "Cloud with Snow.png",
   chancerain: "Sun Behind Rain Cloud.png",
   chancesleet: "Cloud with Snow.png",
@@ -50,7 +29,7 @@ export const statusToFavicon: Record<WeatherStatus, Favicon> = {
   unknown: "Umbrella.png",
 };
 
-export const moonPhaseToFavicon: Record<MoonPhase, Favicon> = {
+export const moonPhaseToFavicon: Readonly<Record<MoonPhase, Favicon>> = {
   New: "New Moon.png",
   "Waxing Crescent": "Waxing Crescent Moon.png",
   "First Quarter": "First Quarter Moon.png",
@@ -61,7 +40,9 @@ export const moonPhaseToFavicon: Record<MoonPhase, Favicon> = {
   "Waning Crescent": "Waning Crescent Moon.png",
 };
 
-export const iconIdMap: Record<WeatherIconId, [TimeOfDay, WeatherStatus]> = {
+export const iconIdToTimeAndStatus: Readonly<
+  Record<WeatherIconId, readonly [TimeOfDay, WeatherStatus]>
+> = {
   "01d": ["day", "sunny"],
   "02d": ["day", "mostlysunny"],
   "03d": ["day", "mostlycloudy"],
@@ -83,7 +64,7 @@ export const iconIdMap: Record<WeatherIconId, [TimeOfDay, WeatherStatus]> = {
   unknown: ["day", "unknown"],
 };
 
-export const statusPriority: Record<WeatherStatus, number> = {
+export const statusPriority: Readonly<Record<WeatherStatus, number>> = {
   tstorms: 100,
   flurries: 101,
   snow: 102,

@@ -1,5 +1,5 @@
 import { openWeather } from "./routes";
-import { iconIdMap } from "../utils/constants";
+import { iconIdToTimeAndStatus } from "../utils/constants";
 import {
   Optional,
   makeFailed,
@@ -14,7 +14,6 @@ export default async function fetchWeather(
   longitude: number
 ): Promise<Optional<WeatherData>> {
   const res = await fetch(openWeather.weatherRoute(latitude, longitude));
-
   if (!res.ok) return makeFailed("Could not fetch weather data");
 
   try {
@@ -27,7 +26,7 @@ export default async function fetchWeather(
     const icon: WeatherIconId = data.weather[0].icon;
     const { description } = data.weather[0];
 
-    const [, status] = iconIdMap[icon];
+    const [, status] = iconIdToTimeAndStatus[icon];
 
     return makeSuccessful({
       temperature,

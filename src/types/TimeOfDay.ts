@@ -1,3 +1,1 @@
-type TimeOfDay = "day" | "night";
-
-export default TimeOfDay;
+export type TimeOfDay = "day" | "night";
