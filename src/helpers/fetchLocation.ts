@@ -1,7 +1,11 @@
 import { openWeather } from "./routes";
-import { Optional, makeFailed, makeSuccessful } from "../utils/optional";
-import { LocationData } from "../utils/location-data";
-import { LocationResponse } from "./LocationResponse";
+import {
+  Optional,
+  makeFailed,
+  makeSuccessful,
+  LocationData,
+  LocationResponse,
+} from "../types";
 
 export default async function fetchLocation(
   latitude: number,

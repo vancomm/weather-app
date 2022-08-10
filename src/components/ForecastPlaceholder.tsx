@@ -2,6 +2,7 @@ import React from "react";
 import CalendarIcon from "./CalendarIcon";
 import Placeholder from "./Placeholder";
 import WeatherIcon from "./WeatherIcon";
+import { TimeOfDay } from "../types";
 
 interface ForecastSkeletonProps {
   timeOfDay: TimeOfDay;

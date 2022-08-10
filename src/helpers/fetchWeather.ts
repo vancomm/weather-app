@@ -1,8 +1,13 @@
 import { openWeather } from "./routes";
-import { iconIdMap } from "../utils/maps";
-import { Optional, makeFailed, makeSuccessful } from "../utils/optional";
-import { WeatherResponse } from "./WeatherResponse";
-import { WeatherData } from "../utils/weather-data";
+import { iconIdMap } from "../utils/constants";
+import {
+  Optional,
+  makeFailed,
+  makeSuccessful,
+  WeatherResponse,
+  WeatherData,
+  WeatherIconId,
+} from "../types";
 
 export default async function fetchWeather(
   latitude: number,

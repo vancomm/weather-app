@@ -3,10 +3,10 @@ export interface CancellablePromise<T> {
   cancel: () => void;
 }
 
-const cancellablePromise = (promise: Promise<any>) => {
+function cancellablePromise<T>(promise: Promise<T>): CancellablePromise<T> {
   let isCanceled = false;
 
-  const wrappedPromise = new Promise((resolve, reject) => {
+  const wrappedPromise = new Promise<T>((resolve, reject) => {
     promise.then(
       (value) => (isCanceled ? reject({ isCanceled, value }) : resolve(value)),
       (error) => reject({ isCanceled, error })
@@ -19,6 +19,6 @@ const cancellablePromise = (promise: Promise<any>) => {
       isCanceled = true;
     },
   };
-};
+}
 
 export default cancellablePromise;

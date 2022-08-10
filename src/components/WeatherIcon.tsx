@@ -1,14 +1,13 @@
 import cn from "classnames";
 import React from "react";
+import { TimeOfDay, WeatherStatus } from "../types";
 import "../assets/styles/wu-icons-style.css";
 
 interface WeatherIconProps {
   variant: "black" | "white" | "solid-black" | "solid-white";
-  // size: "16" | "32" | "64" | "128" | "256";
   size: number;
   time: TimeOfDay;
   status: WeatherStatus;
-  // customSize?: { value: number };
 }
 
 export default function WeatherIcon({

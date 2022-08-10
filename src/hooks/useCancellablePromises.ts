@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { CancellablePromise } from "../utils/cancelable-promise";
+import { CancellablePromise } from "../utils/cancellablePromise";
 
 export default function useCancellablePromises() {
   const pending = useRef<CancellablePromise<any>[]>([]);

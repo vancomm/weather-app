@@ -1,4 +1,5 @@
 import SunCalc from "suncalc";
+import { TimeOfDay } from "../types";
 
 export default function getTimeOfDay(
   latitude: number,

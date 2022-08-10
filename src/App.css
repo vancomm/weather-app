@@ -235,6 +235,23 @@ hr {
   color: var(--font-secondary-night);
 }
 
+.forecast>.placeholder {
+  width: 100%;
+  text-align: center;
+  padding: 2rem;
+  padding-bottom: 1rem;
+}
+
+.forecast>.placeholder span {
+  font-size: 2rem;
+  color: var(--font-secondary);
+}
+
+.night .forecast>.placeholder span {
+  font-size: 2rem;
+  color: var(--font-secondary-night);
+}
+
 .forecast .row {
   width: 100%;
   display: grid;

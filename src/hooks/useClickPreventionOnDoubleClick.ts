@@ -1,7 +1,7 @@
 import React from "react";
 import delay from "../utils/delay";
-import cancellablePromise from "../utils/cancelable-promise";
-import useCancellablePromises from "./use-cancellable-promises";
+import cancellablePromise from "../utils/cancellablePromise";
+import useCancellablePromises from "./useCancellablePromises";
 
 export default function useClickPreventionOnDoubleClick(
   onClick: (e: React.MouseEvent) => any,

@@ -1,4 +1,6 @@
-export interface ForecastResponse {
+import WeatherIconId from "./WeatherIconId";
+
+export default interface ForecastResponse {
   cod: string;
   message: number;
   cnt: number;
@@ -6,7 +8,7 @@ export interface ForecastResponse {
   city: City;
 }
 
-export interface City {
+interface City {
   id: number;
   name: string;
   coord: Coord;
@@ -17,12 +19,12 @@ export interface City {
   sunset: number;
 }
 
-export interface Coord {
+interface Coord {
   lat: number;
   lon: number;
 }
 
-export interface List {
+interface List {
   dt: number;
   main: Main;
   weather: Weather[];
@@ -36,11 +38,11 @@ export interface List {
   snow: { "3h": number } | undefined;
 }
 
-export interface Clouds {
+interface Clouds {
   all: number;
 }
 
-export interface Main {
+interface Main {
   temp: number;
   feels_like: number;
   temp_min: number;
@@ -52,18 +54,18 @@ export interface Main {
   temp_kf: number;
 }
 
-export interface Sys {
+interface Sys {
   pod: string;
 }
 
-export interface Weather {
+interface Weather {
   id: number;
   main: string;
   description: string;
   icon: WeatherIconId;
 }
 
-export interface Wind {
+interface Wind {
   speed: number;
   deg: number;
   gust: number;

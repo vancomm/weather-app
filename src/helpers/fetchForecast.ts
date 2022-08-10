@@ -1,8 +1,12 @@
 import { openWeather } from "./routes";
-import { ForecastResponse } from "./ForecastResponse";
-import { ForecastData } from "../utils/forecast-data";
-import { iconIdMap, statusPriority } from "../utils/maps";
-import { makeFailed, makeSuccessful, Optional } from "../utils/optional";
+import { iconIdMap, statusPriority } from "../utils/constants";
+import {
+  makeFailed,
+  makeSuccessful,
+  Optional,
+  ForecastResponse,
+  ForecastData,
+} from "../types";
 
 export default async function fetchForecast(
   latitude: number,

@@ -1,7 +1,8 @@
+import React from "react";
 import WeatherIcon from "./WeatherIcon";
 import Placeholder from "./Placeholder";
+import { TimeOfDay } from "../types";
 import "../assets/styles/utility.css";
-import React from "react";
 
 interface WeatherSkeletonProps {
   timeOfDay: TimeOfDay;

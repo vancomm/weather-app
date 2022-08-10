@@ -1,4 +1,6 @@
-export interface WeatherResponse {
+import WeatherIconId from "./WeatherIconId";
+
+export default interface WeatherResponse {
   coord: Coord;
   weather: Weather[];
   base: string;
@@ -14,16 +16,16 @@ export interface WeatherResponse {
   cod: number;
 }
 
-export interface Clouds {
+interface Clouds {
   all: number;
 }
 
-export interface Coord {
+interface Coord {
   lon: number;
   lat: number;
 }
 
-export interface Main {
+interface Main {
   temp: number;
   feels_like: number;
   temp_min: number;
@@ -34,7 +36,7 @@ export interface Main {
   grnd_level: number;
 }
 
-export interface Sys {
+interface Sys {
   type: number;
   id: number;
   country: string;
@@ -42,14 +44,14 @@ export interface Sys {
   sunset: number;
 }
 
-export interface Weather {
+interface Weather {
   id: number;
   main: string;
   description: string;
   icon: WeatherIconId;
 }
 
-export interface Wind {
+interface Wind {
   speed: number;
   deg: number;
   gust: number;

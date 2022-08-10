@@ -1,3 +1,32 @@
+import WeatherStatus from "../types/WeatherStatus";
+import { MoonPhase } from "./getMoonPhase";
+import WeatherIconId from "../types/WeatherIconId";
+import TimeOfDay from "../types/TimeOfDay";
+
+type Favicon =
+  | "Cloud.png"
+  | "Cloud with Lightning and Rain.png"
+  | "Cloud with Lightning.png"
+  | "Cloud with Rain.png"
+  | "Cloud with Snow.png"
+  | "Fog.png"
+  | "Snowflake.png"
+  | "Sun Behind Cloud.png"
+  | "Sun Behind Large Cloud.png"
+  | "Sun Behind Rain Cloud.png"
+  | "Sun Behind Small Cloud.png"
+  | "Sun.png"
+  | "Umbrella.png"
+  | "Umbrella with Rain Drops.png"
+  | "New Moon.png"
+  | "Waxing Crescent Moon.png"
+  | "First Quarter Moon.png"
+  | "Waxing Gibbous Moon.png"
+  | "Full Moon.png"
+  | "Waning Gibbous Moon.png"
+  | "Last Quarter Moon.png"
+  | "Waning Crescent Moon.png";
+
 export const statusToFavicon: Record<WeatherStatus, Favicon> = {
   chanceflurries: "Cloud with Snow.png",
   chancerain: "Sun Behind Rain Cloud.png",

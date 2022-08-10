@@ -6,55 +6,44 @@ import ForecastSkeleton from "./components/ForecastPlaceholder";
 import fetchWeather from "./helpers/fetchWeather";
 import fetchLocation from "./helpers/fetchLocation";
 import fetchForecast from "./helpers/fetchForecast";
-import formatDate from "./utils/format-date";
-import getTimeOfDay from "./utils/get-time-of-day";
-import getMoonPhase from "./utils/get-moon-phase";
-import formatTemperature from "./utils/format-temperature";
-import { isSuccessful, makeSuccessful } from "./utils/optional";
-import { WeatherData, defaultWeatherData } from "./utils/weather-data";
-import { ForecastData, defaultForecastData } from "./utils/forecast-data";
-import { moonPhaseToFavicon, statusToFavicon } from "./utils/maps";
+import isDev from "./utils/isDev";
+import formatDate from "./utils/formatDate";
+import getTimeOfDay from "./utils/getTimeOfDay";
+import formatTemperature from "./utils/formatTemperature";
+import formatLocationData from "./utils/formatLocationData";
+import { getMoonPhase, MoonPhase } from "./utils/getMoonPhase";
+import { moonPhaseToFavicon, statusToFavicon } from "./utils/constants";
 import {
+  TimeOfDay,
+  WeatherData,
+  ForecastData,
   LocationData,
-  defaultLocationData,
-  formatLocationData,
-} from "./utils/location-data";
+  TemperatureUnit,
+  isSuccessful,
+  makeSuccessful,
+} from "./types";
 import "./App.css";
-import useClickPreventionOnDoubleClick from "./hooks/use-click-prevention-on-double-click";
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [units, setUnits] = useState<TemperatureUnit>("C");
+  const [notification, setNotification] = useState<string>();
+
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("day");
   const [moonPhase, setMoonPhase] = useState<MoonPhase>("Full");
 
-  const [location, setLocation] = useState<LocationData>(defaultLocationData);
-
-  const [weatherData, setWeatherData] =
-    useState<WeatherData>(defaultWeatherData);
-
-  const [forecastData, setForecastData] = useState<ForecastData[]>(
-    Array(4).fill(defaultForecastData)
-  );
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [units, setUnits] = useState<TemperatureUnit>("C");
-
-  const [notification, setNotification] = useState<Option<string>>();
+  const [location, setLocation] = useState<LocationData>();
+  const [weatherData, setWeatherData] = useState<WeatherData>();
+  const [forecastData, setForecastData] = useState<ForecastData[]>();
 
   const swapUnits = () => {
     setUnits(units === "C" ? "F" : "C");
   };
 
-  const copyTemperature = () => {
-    navigator.clipboard.writeText(
-      `${formatTemperature(weatherData.temperature, units)}°${units}`
-    );
+  const swapTimeOfDay = () => {
+    if (!isDev()) return;
+    setTimeOfDay(timeOfDay === "day" ? "night" : "day");
   };
-
-  const [handleClick, handleDoubleClick] = useClickPreventionOnDoubleClick(
-    swapUnits,
-    copyTemperature,
-    150
-  );
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -66,7 +55,7 @@ export default function App() {
       (position) => {
         const { latitude, longitude } = position.coords;
 
-        const moonPhase = getMoonPhase();
+        const moonPhase = getMoonPhase().name;
 
         const timeOfDay = getTimeOfDay(latitude, longitude);
 
@@ -116,6 +105,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (!weatherData) return;
+
     const title = document.querySelector("title");
     const favicon16 = document.querySelector("link#favicon-16");
     const favicon32 = document.querySelector("link#favicon-32");
@@ -126,7 +117,7 @@ export default function App() {
         ? moonPhaseToFavicon[moonPhase]
         : statusToFavicon[weatherData.status];
 
-    title!.innerText = location.name === "" ? "Weather" : location.name;
+    title!.innerText = location?.name ?? "Weather";
 
     favicon16?.setAttribute(
       "href",
@@ -144,7 +135,9 @@ export default function App() {
     );
 
     if (timeOfDay === "night") {
-      document.querySelector("html")?.classList.add("night");
+      document.querySelector("html")!.classList.add("night");
+    } else {
+      document.querySelector("html")!.classList.remove("night");
     }
   }, [location, moonPhase, timeOfDay, weatherData]);
 
@@ -160,22 +153,20 @@ export default function App() {
 
           {notification && <div className="notification">{notification}</div>}
 
-          <div className="weather-icon">
+          <div className="weather-icon" onClick={swapTimeOfDay}>
             <WeatherIcon
               size={256}
               variant="white"
               time={timeOfDay}
-              status={weatherData.status}
+              status={weatherData?.status ?? "unknown"}
             />
           </div>
 
-          <div
-            className="temperature"
-            onClick={handleClick}
-            onDoubleClick={handleDoubleClick}
-          >
+          <div className="temperature" onClick={swapUnits}>
             <span className="value">
-              {formatTemperature(weatherData.temperature, units)}
+              {weatherData
+                ? formatTemperature(weatherData.temperature, units)
+                : "--"}
               {"°"}
             </span>
             <span className="units">{units}</span>
@@ -183,14 +174,17 @@ export default function App() {
 
           <div className="feels-like">
             <span className="value">
-              feels like {formatTemperature(weatherData.feelsLike, units)}
+              feels like{" "}
+              {weatherData
+                ? formatTemperature(weatherData.temperature, units)
+                : "--"}
               {"°"}
             </span>
             <span className="units">{units}</span>
           </div>
 
           <div className="description">
-            <span>{weatherData.description}</span>
+            <span>{weatherData?.description ?? "--"}</span>
           </div>
 
           <hr />
@@ -209,8 +203,10 @@ export default function App() {
             <CalendarIcon width="18px" height="16px" />
             <span>forecast</span>
           </div>
+
           <hr />
-          {forecastData.map(({ date, status, tempMin, tempMax, pop }, i) => (
+
+          {forecastData?.map(({ date, status, tempMin, tempMax, pop }, i) => (
             <React.Fragment key={date?.getDate() || i}>
               {i > 0 && <hr />}
               <div className="row">
@@ -222,7 +218,7 @@ export default function App() {
                         size={32}
                         variant="white"
                         status={status}
-                        time={timeOfDay}
+                        time="day"
                       />
                       <span className="pop">{Math.round(pop * 100)}%</span>
                     </>
@@ -231,7 +227,7 @@ export default function App() {
                       size={48}
                       variant="white"
                       status={status}
-                      time={timeOfDay}
+                      time="day"
                     />
                   )}
                 </div>
@@ -249,7 +245,11 @@ export default function App() {
                 </div>
               </div>
             </React.Fragment>
-          ))}
+          )) ?? (
+            <div className="placeholder">
+              <span>No data</span>
+            </div>
+          )}
         </div>
       )}
 
