@@ -20,11 +20,10 @@ export const handler: Handler = async (event, context) => {
   const res = await fetch(route);
 
   if (!res.ok) {
+    const text = await res.text();
     return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "Could not fetch weather",
-      }),
+      statusCode: res.status,
+      body: text,
     };
   }
 

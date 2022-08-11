@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "sources": ["../../home/vancomm/weather-app/functions/hello-world/hello-world.ts"],
+  "sourceRoot": "/tmp/tmp-286332-p6LXCDXnmMKb",
+  "sourcesContent": ["import { Handler } from \"@netlify/functions\";\n\nexport const handler: Handler = async (event, context) => {\n  const name = event.queryStringParameters?.name || \"stranger\";\n\n  return {\n    statusCode: 200,\n    body: JSON.stringify({\n      message: `Hello, ${name}!`,\n    }),\n  };\n};\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAEO,IAAM,UAAmB,OAAO,OAAO,YAAY;AAF1D;AAGE,QAAM,OAAO,aAAM,0BAAN,mBAA6B,SAAQ;AAElD,SAAO;AAAA,IACL,YAAY;AAAA,IACZ,MAAM,KAAK,UAAU;AAAA,MACnB,SAAS,UAAU;AAAA,IACrB,CAAC;AAAA,EACH;AACF;",
+  "names": []
+}

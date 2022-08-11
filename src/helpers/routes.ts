@@ -8,3 +8,8 @@ export const openWeather = {
   forecastRoute: (lat: number, lon: number) =>
     `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}`,
 };
+
+export const netlify = {
+  weather: (lat: number, lon: number) =>
+    `/.netlify/functions/weather?lat=${lat}&lon=${lon}`,
+};

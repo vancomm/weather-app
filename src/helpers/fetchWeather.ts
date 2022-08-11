@@ -1,4 +1,4 @@
-import { openWeather } from "./routes";
+import { netlify } from "./routes";
 import { iconIdToTimeAndStatus } from "../utils/constants";
 import {
   Optional,
@@ -13,7 +13,7 @@ export default async function fetchWeather(
   latitude: number,
   longitude: number
 ): Promise<Optional<WeatherData>> {
-  const res = await fetch(openWeather.weatherRoute(latitude, longitude));
+  const res = await fetch(netlify.weather(latitude, longitude));
   if (!res.ok) return makeFailed("Could not fetch weather data");
 
   try {
