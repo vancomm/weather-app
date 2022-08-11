@@ -14,3 +14,23 @@
   - [x] use a spinner 
   - [x] dim background
   - [x] use horizontal bars as text placeholder
+- [x] dumb down rain prediction value
+
+
+
+
+
+### UI/UX feedback:
+
+- [ ] add a city picker 
+- [ ] make Celsius/Fahrenheit switcher more obvious 
+  - [ ] or fix Celsius/Fahrenheit switcher outline 
+
+- [ ] make min/max temperature more clear
+- [ ] move location name to title 
+- [ ] add a geolocation symbol next to location name (when using geolocation!)
+- [ ] move weather description below weather icon and above temperature
+- [x] change forecast day naming from "today-fri-sat" to "today-tomorrow-sat"
+
+
+

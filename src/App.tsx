@@ -226,7 +226,7 @@ export default function App() {
                         status={status}
                         time="day"
                       />
-                      <span className="pop">{Math.round(pop * 100)}%</span>
+                      <span className="pop">{Math.round(pop * 10) * 10}%</span>
                     </>
                   ) : (
                     <WeatherIcon
