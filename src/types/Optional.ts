@@ -21,3 +21,13 @@ export function makeSuccessful<T>(value: T): Successful<T> {
 export function makeFailed(message: string): Failed {
   return { success: false, message };
 }
+
+export function handleOption<T>(
+  handleSuccess: (value: T) => any,
+  handleFail: (message: string) => string | undefined | void | null
+) {
+  return (option: Optional<T>): Optional<T> =>
+    isSuccessful(option)
+      ? makeSuccessful(handleSuccess(option.value))
+      : makeFailed(handleFail(option.message) ?? "");
+}

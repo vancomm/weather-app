@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import produce from "immer";
 
 import WeatherIcon from "./components/WeatherIcon";
 import CalendarIcon from "./components/CalendarIcon";
@@ -23,9 +24,8 @@ import {
   ForecastData,
   LocationData,
   TemperatureUnit,
-  isSuccessful,
-  makeSuccessful,
   MoonPhase,
+  handleOption,
 } from "./types";
 
 import "./App.css";
@@ -33,7 +33,7 @@ import "./App.css";
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [units, setUnits] = useState<TemperatureUnit>("C");
-  const [notification, setNotification] = useState<string>();
+  const [notifications, setNotifications] = useState<string[]>();
 
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("day");
   const [moonPhase, setMoonPhase] = useState<MoonPhase>("Full");
@@ -51,9 +51,20 @@ export default function App() {
     setTimeOfDay(timeOfDay === "day" ? "night" : "day");
   };
 
+  const appendNotifications = (message: string) => {
+    setNotifications(
+      produce((state) => {
+        if (state?.includes(message)) return;
+        state?.push(message);
+      })
+    );
+  };
+
   useEffect(() => {
+    setNotifications([]);
+
     if (!navigator.geolocation) {
-      setNotification("Your browser does not support location services");
+      setNotifications(["Your browser does not support location services"]);
       return;
     }
 
@@ -70,41 +81,20 @@ export default function App() {
 
         setIsLoading(true);
 
-        fetchLocation(latitude, longitude)
-          .then((option) => {
-            if (!isSuccessful(option)) return option;
-            setLocation(option.value);
-            return makeSuccessful({ name: option.value.name });
-          })
-          .then((option) => {
-            return isSuccessful(option)
-              ? fetchWeather(latitude, longitude)
-              : option;
-          })
-          .then((option) => {
-            if (!isSuccessful(option)) return option;
-            setWeatherData(option.value);
-            return option;
-          })
-          .then((option) => {
-            return isSuccessful(option)
-              ? fetchForecast(latitude, longitude)
-              : option;
-          })
-          .then((option) => {
-            if (!isSuccessful(option)) return option;
-            setForecastData(option.value);
-            return option;
-          })
-          .then((option) => {
-            if (!isSuccessful(option)) {
-              setNotification(option.message);
-            }
-            setIsLoading(false);
-          });
+        Promise.all([
+          fetchLocation(latitude, longitude).then(
+            handleOption(setLocation, appendNotifications)
+          ),
+          fetchWeather(latitude, longitude).then(
+            handleOption(setWeatherData, appendNotifications)
+          ),
+          fetchForecast(latitude, longitude).then(
+            handleOption(setForecastData, appendNotifications)
+          ),
+        ]).then(() => setIsLoading(false));
       },
       () => {
-        setNotification("Location access blocked");
+        setNotifications(["Location access blocked"]);
         setIsLoading(false);
       }
     );
@@ -157,7 +147,11 @@ export default function App() {
 
           <hr />
 
-          {notification && <div className="notification">{notification}</div>}
+          {notifications?.map((message, i) => (
+            <div key={i} className="notification">
+              {message}
+            </div>
+          ))}
 
           <div className="weather-icon" onClick={swapTimeOfDay}>
             <WeatherIcon

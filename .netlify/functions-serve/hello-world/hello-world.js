@@ -1,1 +1,0 @@
-module.exports = require('./src/functions/hello-world/hello-world.js')
