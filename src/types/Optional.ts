@@ -25,7 +25,7 @@ export function makeFailed(message: string): Failed {
 export function handleOption<T>(
   handleSuccess: (value: T) => any,
   handleFail: (message: string) => string | undefined | void | null
-) {
+): (option: Optional<T>) => Optional<T> {
   return (option: Optional<T>): Optional<T> =>
     isSuccessful(option)
       ? makeSuccessful(handleSuccess(option.value))

@@ -12,7 +12,7 @@ export default async function fetchForecast(
   latitude: number,
   longitude: number
 ): Promise<Optional<ForecastData[]>> {
-  const res = await fetch(netlify("forecast", latitude, longitude));
+  const res = await fetch(netlify.openWeather("forecast", latitude, longitude));
 
   if (!res.ok) return makeFailed("Could not fetch forecast");
 

@@ -11,7 +11,7 @@ export default async function fetchLocation(
   latitude: number,
   longitude: number
 ): Promise<Optional<LocationData>> {
-  const res = await fetch(netlify("location", latitude, longitude));
+  const res = await fetch(netlify.openWeather("location", latitude, longitude));
 
   if (!res.ok) return makeFailed("Could not determine location");
 

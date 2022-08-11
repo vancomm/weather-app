@@ -12,4 +12,5 @@ export * from "./ForecastResponse";
 export * from "./LocationResponse";
 export * from "./Favicon";
 export * from "./MoonPhase";
-export * from "./RequestType";
+export * from "./OpenWeatherRequestType";
+export * from "./CitiesResponse";

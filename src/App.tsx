@@ -51,7 +51,7 @@ export default function App() {
     setTimeOfDay(timeOfDay === "day" ? "night" : "day");
   };
 
-  const appendNotifications = (message: string) => {
+  const appendNotification = (message: string) => {
     setNotifications(
       produce((state) => {
         if (state?.includes(message)) return;
@@ -73,7 +73,6 @@ export default function App() {
         const { latitude, longitude } = position.coords;
 
         const moonPhase = getMoonPhase().name;
-
         const timeOfDay = getTimeOfDay(latitude, longitude);
 
         setTimeOfDay(timeOfDay);
@@ -83,13 +82,13 @@ export default function App() {
 
         Promise.all([
           fetchLocation(latitude, longitude).then(
-            handleOption(setLocation, appendNotifications)
+            handleOption(setLocation, appendNotification)
           ),
           fetchWeather(latitude, longitude).then(
-            handleOption(setWeatherData, appendNotifications)
+            handleOption(setWeatherData, appendNotification)
           ),
           fetchForecast(latitude, longitude).then(
-            handleOption(setForecastData, appendNotifications)
+            handleOption(setForecastData, appendNotification)
           ),
         ]).then(() => setIsLoading(false));
       },
