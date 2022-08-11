@@ -1,4 +1,4 @@
-import { openWeather } from "./routes";
+import { netlify } from "./routes";
 import {
   Optional,
   makeFailed,
@@ -11,7 +11,7 @@ export default async function fetchLocation(
   latitude: number,
   longitude: number
 ): Promise<Optional<LocationData>> {
-  const res = await fetch(openWeather.locationRoute(latitude, longitude));
+  const res = await fetch(netlify("location", latitude, longitude));
 
   if (!res.ok) return makeFailed("Could not determine location");
 

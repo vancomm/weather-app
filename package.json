@@ -27,7 +27,7 @@
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-scripts start",
-    "prebuild": "cd functions/weather && npm ci",
+    "prebuild": "./functions/install.sh",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
