@@ -22,12 +22,12 @@ export function makeFailed(message: string): Failed {
   return { success: false, message };
 }
 
-export function handleOption<T>(
-  handleSuccess: (value: T) => any,
-  handleFail: (message: string) => string | undefined | void | null
-): (option: Optional<T>) => Optional<T> {
-  return (option: Optional<T>): Optional<T> =>
+export function handleOption<T, S, F>(
+  handleSuccess: (value: T) => S,
+  handleFail: (message: string) => F
+): (option: Optional<T>) => S | F {
+  return (option) =>
     isSuccessful(option)
-      ? makeSuccessful(handleSuccess(option.value))
-      : makeFailed(handleFail(option.message) ?? "");
+      ? handleSuccess(option.value)
+      : handleFail(option.message);
 }

@@ -9,6 +9,8 @@ import ForecastSkeleton from "./components/ForecastPlaceholder";
 import fetchWeather from "./helpers/fetchWeather";
 import fetchLocation from "./helpers/fetchLocation";
 import fetchForecast from "./helpers/fetchForecast";
+import getGeolocation from "./helpers/getGeolocation";
+import { CacheKeyMap, get, set } from "./helpers/cacheHelper";
 
 import isDev from "./utils/isDev";
 import formatDate from "./utils/formatDate";
@@ -25,6 +27,10 @@ import {
   LocationData,
   TemperatureUnit,
   MoonPhase,
+  isSuccessful,
+  Optional,
+  makeSuccessful,
+  makeFailed,
   handleOption,
 } from "./types";
 
@@ -33,13 +39,15 @@ import "./App.css";
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [units, setUnits] = useState<TemperatureUnit>("C");
-  const [notifications, setNotifications] = useState<string[]>();
+  const [notifications, setNotifications] = useState<string[]>([]);
 
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("day");
   const [moonPhase, setMoonPhase] = useState<MoonPhase>("Full");
 
-  const [location, setLocation] = useState<LocationData>();
+  const [geolocation, setGeolocation] = useState<GeolocationCoordinates>();
+
   const [weatherData, setWeatherData] = useState<WeatherData>();
+  const [locationData, setLocationData] = useState<LocationData>();
   const [forecastData, setForecastData] = useState<ForecastData[]>();
 
   const swapUnits = () => {
@@ -54,49 +62,81 @@ export default function App() {
   const appendNotification = (message: string) => {
     setNotifications(
       produce((state) => {
-        if (state?.includes(message)) return;
-        state?.push(message);
+        if (state.includes(message)) return;
+        state.push(message);
       })
     );
+  };
+
+  const initializeValue = async <
+    K extends keyof CacheKeyMap,
+    T extends CacheKeyMap[K]
+  >(
+    cacheKey: K,
+    setFn: (value: T) => void,
+    fetchFn: () => Promise<Optional<T>>,
+    handleFail: (message: string) => void
+  ): Promise<Optional<T>> => {
+    const cacheOption = await get<K, T>(cacheKey);
+
+    if (isSuccessful(cacheOption)) {
+      setFn(cacheOption.value);
+      return makeSuccessful(cacheOption.value);
+    }
+
+    const valueOption = await fetchFn();
+
+    if (isSuccessful(valueOption)) {
+      set(cacheKey, valueOption.value).then(() => setFn(valueOption.value));
+      return makeSuccessful(valueOption.value);
+    }
+
+    handleFail(valueOption.message);
+    return makeFailed(valueOption.message);
   };
 
   useEffect(() => {
     setNotifications([]);
 
-    if (!navigator.geolocation) {
-      setNotifications(["Your browser does not support location services"]);
-      return;
-    }
+    setIsLoading(true);
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
+    initializeValue(
+      "geolocation",
+      setGeolocation,
+      getGeolocation,
+      appendNotification
+    )
+      .then(
+        handleOption(({ latitude, longitude }) => {
+          const moonPhase = getMoonPhase().name;
+          const timeOfDay = getTimeOfDay(latitude, longitude);
 
-        const moonPhase = getMoonPhase().name;
-        const timeOfDay = getTimeOfDay(latitude, longitude);
+          setTimeOfDay(timeOfDay);
+          setMoonPhase(moonPhase);
 
-        setTimeOfDay(timeOfDay);
-        setMoonPhase(moonPhase);
-
-        setIsLoading(true);
-
-        Promise.all([
-          fetchLocation(latitude, longitude).then(
-            handleOption(setLocation, appendNotification)
-          ),
-          fetchWeather(latitude, longitude).then(
-            handleOption(setWeatherData, appendNotification)
-          ),
-          fetchForecast(latitude, longitude).then(
-            handleOption(setForecastData, appendNotification)
-          ),
-        ]).then(() => setIsLoading(false));
-      },
-      () => {
-        setNotifications(["Location access blocked"]);
-        setIsLoading(false);
-      }
-    );
+          Promise.all([
+            initializeValue(
+              "location",
+              setLocationData,
+              () => fetchLocation(latitude, longitude),
+              appendNotification
+            ),
+            initializeValue(
+              "weather",
+              setWeatherData,
+              () => fetchWeather(latitude, longitude),
+              appendNotification
+            ),
+            initializeValue(
+              "forecast",
+              setForecastData,
+              () => fetchForecast(latitude, longitude),
+              appendNotification
+            ),
+          ]);
+        }, appendNotification)
+      )
+      .then(() => setIsLoading(false));
   }, []);
 
   useEffect(() => {
@@ -112,7 +152,7 @@ export default function App() {
         ? moonPhaseToFavicon[moonPhase]
         : statusToFavicon[weatherData.status];
 
-    title!.innerText = location?.name ?? "Weather";
+    title!.innerText = locationData?.name ?? "Weather";
 
     favicon16?.setAttribute(
       "href",
@@ -134,7 +174,7 @@ export default function App() {
     } else {
       document.querySelector("html")!.classList.remove("night");
     }
-  }, [location, moonPhase, timeOfDay, weatherData]);
+  }, [locationData, moonPhase, timeOfDay, weatherData]);
 
   return (
     <div className="app">
@@ -189,7 +229,7 @@ export default function App() {
           <hr />
 
           <div className="location">
-            <span>{formatLocationData(location)}</span>
+            <span>{formatLocationData(locationData)}</span>
           </div>
         </div>
       )}

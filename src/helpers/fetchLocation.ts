@@ -15,9 +15,13 @@ export default async function fetchLocation(
 
   if (!res.ok) return makeFailed("Could not determine location");
 
-  const data: LocationResponse = await res.json();
+  try {
+    const data: LocationResponse = await res.json();
 
-  const { name, state, country } = data[0];
+    const { name, state, country } = data[0];
 
-  return makeSuccessful({ name, state, country });
+    return makeSuccessful({ name, state, country });
+  } catch (e) {
+    return makeFailed("Bad location data");
+  }
 }

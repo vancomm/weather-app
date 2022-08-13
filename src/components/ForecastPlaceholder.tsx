@@ -16,7 +16,7 @@ export default function ForecastSkeleton({ timeOfDay }: ForecastSkeletonProps) {
         <span>forecast</span>
       </div>
       <hr />
-      {[...Array(6).keys()].map((_, i) => (
+      {[...Array(5).keys()].map((_, i) => (
         <React.Fragment key={i}>
           {i > 0 && <hr />}
           <div className="row">
