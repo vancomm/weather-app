@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import produce from "immer";
 
 import WeatherIcon from "./components/WeatherIcon";
@@ -29,12 +29,11 @@ import {
   MoonPhase,
   isSuccessful,
   Optional,
-  makeSuccessful,
-  makeFailed,
   handleOption,
 } from "./types";
 
 import "./App.css";
+import GeolocationIcon from "./components/GeolocationIcon";
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -44,7 +43,7 @@ export default function App() {
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("day");
   const [moonPhase, setMoonPhase] = useState<MoonPhase>("Full");
 
-  const [geolocation, setGeolocation] = useState<GeolocationCoordinates>();
+  // const [geolocation, setGeolocation] = useState<GeolocationCoordinates>();
 
   const [weatherData, setWeatherData] = useState<WeatherData>();
   const [locationData, setLocationData] = useState<LocationData>();
@@ -68,76 +67,62 @@ export default function App() {
     );
   };
 
-  const initializeValue = async <
+  const tryGetCachedValue = async <
     K extends keyof CacheKeyMap,
     T extends CacheKeyMap[K]
   >(
     cacheKey: K,
-    setFn: (value: T) => void,
-    fetchFn: () => Promise<Optional<T>>,
-    handleFail: (message: string) => void
+    fallbackFn?: () => Promise<Optional<T>>
   ): Promise<Optional<T>> => {
     const cacheOption = await get<K, T>(cacheKey);
 
-    if (isSuccessful(cacheOption)) {
-      setFn(cacheOption.value);
-      return makeSuccessful(cacheOption.value);
-    }
+    if (isSuccessful(cacheOption) || !fallbackFn) return cacheOption;
 
-    const valueOption = await fetchFn();
+    const valueOption = await fallbackFn();
 
-    if (isSuccessful(valueOption)) {
-      set(cacheKey, valueOption.value).then(() => setFn(valueOption.value));
-      return makeSuccessful(valueOption.value);
-    }
+    if (isSuccessful(valueOption)) set(cacheKey, valueOption.value);
 
-    handleFail(valueOption.message);
-    return makeFailed(valueOption.message);
+    return valueOption;
   };
+
+  const fetchData = useCallback(async () => {
+    const geolocationOption = await tryGetCachedValue(
+      "geolocation",
+      getGeolocation
+    );
+
+    if (!isSuccessful(geolocationOption)) {
+      appendNotification(geolocationOption.message);
+      return;
+    }
+
+    const { latitude, longitude } = geolocationOption.value;
+
+    const moonPhase = getMoonPhase().name;
+    const timeOfDay = getTimeOfDay(latitude, longitude);
+
+    setTimeOfDay(timeOfDay);
+    setMoonPhase(moonPhase);
+
+    Promise.all([
+      tryGetCachedValue("location", () =>
+        fetchLocation(latitude, longitude)
+      ).then(handleOption(setLocationData, appendNotification)),
+      tryGetCachedValue("weather", () =>
+        fetchWeather(latitude, longitude)
+      ).then(handleOption(setWeatherData, appendNotification)),
+      tryGetCachedValue("forecast", () =>
+        fetchForecast(latitude, longitude)
+      ).then(handleOption(setForecastData, appendNotification)),
+    ]);
+  }, []);
 
   useEffect(() => {
     setNotifications([]);
-
     setIsLoading(true);
 
-    initializeValue(
-      "geolocation",
-      setGeolocation,
-      getGeolocation,
-      appendNotification
-    )
-      .then(
-        handleOption(({ latitude, longitude }) => {
-          const moonPhase = getMoonPhase().name;
-          const timeOfDay = getTimeOfDay(latitude, longitude);
-
-          setTimeOfDay(timeOfDay);
-          setMoonPhase(moonPhase);
-
-          Promise.all([
-            initializeValue(
-              "location",
-              setLocationData,
-              () => fetchLocation(latitude, longitude),
-              appendNotification
-            ),
-            initializeValue(
-              "weather",
-              setWeatherData,
-              () => fetchWeather(latitude, longitude),
-              appendNotification
-            ),
-            initializeValue(
-              "forecast",
-              setForecastData,
-              () => fetchForecast(latitude, longitude),
-              appendNotification
-            ),
-          ]);
-        }, appendNotification)
-      )
-      .then(() => setIsLoading(false));
-  }, []);
+    fetchData().then(() => setIsLoading(false));
+  }, [fetchData]);
 
   useEffect(() => {
     if (!weatherData) return;
@@ -178,11 +163,29 @@ export default function App() {
 
   return (
     <div className="app">
+      {isDev() && (
+        <div style={{ display: "flex", gap: "0.2rem" }}>
+          <button
+            onClick={() => setIsLoading(!isLoading)}
+            style={{ color: "black" }}
+          >
+            {isLoading ? "loading" : "not loading"}
+          </button>
+          <button onClick={swapTimeOfDay} style={{ color: "black" }}>
+            {timeOfDay}
+          </button>
+        </div>
+      )}
+
       {isLoading ? (
         <WeatherSkeleton timeOfDay={timeOfDay} />
       ) : (
         <div className="container weather">
-          <div className="title">Weather</div>
+          <div className="sub-title">Weather in</div>
+          <div className="title">
+            {formatLocationData(locationData)}
+            <GeolocationIcon width={"20px"} height={"20px"} />
+          </div>
 
           <hr />
 
@@ -192,7 +195,7 @@ export default function App() {
             </div>
           ))}
 
-          <div className="weather-icon" onClick={swapTimeOfDay}>
+          <div className="weather-icon">
             <WeatherIcon
               size={256}
               variant="white"
@@ -201,7 +204,11 @@ export default function App() {
             />
           </div>
 
-          <div className="temperature" onClick={swapUnits}>
+          <div className="description">
+            <span>{weatherData?.description ?? "--"}</span>
+          </div>
+
+          <div className="temperature">
             <span className="value">
               {weatherData
                 ? formatTemperature(weatherData.temperature, units)
@@ -209,6 +216,10 @@ export default function App() {
               {"°"}
             </span>
             <span className="units">{units}</span>
+            <span className="switch-units" onClick={swapUnits}>
+              {"/"}
+              {units === "C" ? "F" : "C"}
+            </span>
           </div>
 
           <div className="feels-like">
@@ -220,16 +231,6 @@ export default function App() {
               {"°"}
             </span>
             <span className="units">{units}</span>
-          </div>
-
-          <div className="description">
-            <span>{weatherData?.description ?? "--"}</span>
-          </div>
-
-          <hr />
-
-          <div className="location">
-            <span>{formatLocationData(locationData)}</span>
           </div>
         </div>
       )}
@@ -246,7 +247,7 @@ export default function App() {
           <hr />
 
           {forecastData?.map(({ date, status, tempMin, tempMax, pop }, i) => (
-            <React.Fragment key={date?.getDate() || i}>
+            <React.Fragment key={date.getDate() || i}>
               {i > 0 && <hr />}
               <div className="row">
                 <span className="date">{formatDate(date)}</span>

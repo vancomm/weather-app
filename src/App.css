@@ -156,9 +156,17 @@ hr {
   margin: 8px;
 }
 
+.weather .sub-title {
+  font-size: 1.5rem;
+  /* color: var(--font-secondary); */
+}
+
 .weather .title {
-  font-size: 2.5rem;
-  padding-bottom: 0.5rem;
+  font-size: 3rem;
+  padding-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .weather .notification {
@@ -175,28 +183,32 @@ hr {
 }
 
 .weather .temperature {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
   font-size: 4rem;
-  padding: 0.8rem 0.8rem 0;
   margin-bottom: 0.5rem;
-  border-radius: 10px;
-  transition: background-color 200ms ease;
-  height: 5rem;
-  overflow: hidden;
-  user-select: none;
-}
-
-.weather:not(.skeleton) .temperature:hover {
-  cursor: pointer;
-  background: var(--bg-container-overlay);
-  transition: background-color 150ms ease;
-}
-
-.night .weather:not(.skeleton) .temperature:hover {
-  background: var(--bg-container-overlay-night);
 }
 
 .weather .temperature .units {
   font-size: 3.9rem;
+}
+
+.weather .temperature .switch-units {
+  font-size: 3rem;
+  color: var(--font-secondary);
+  transition: color 150ms ease;
+}
+
+.weather:not(.skeleton) .temperature .switch-units:hover {
+  cursor: pointer;
+  color: var(--font-primary);
+  transition: color 150ms ease;
+}
+
+.night .weather .temperature .switch-units {
+  color: var(--font-secondary-night);
 }
 
 .weather .feels-like .value,

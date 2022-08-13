@@ -1,21 +1,13 @@
-import { ReactSVG } from "react-svg";
 import calendar from "../assets/icons/calendar.svg";
+import Icon, { BaseIconProps } from "./Icon";
 
-interface CalendarIconProps {
-  width: string;
-  height: string;
-}
-
-export default function CalendarIcon({ width, height }: CalendarIconProps) {
+export default function CalendarIcon({ width, height }: BaseIconProps) {
   return (
-    <ReactSVG
-      beforeInjection={(svg) => {
-        svg.setAttribute(
-          "style",
-          `width: ${width}; height: ${height}; transform: translateY(1px)`
-        );
-      }}
-      src={calendar}
+    <Icon
+      width={width}
+      height={height}
+      source={calendar}
+      customStyle="transform: translateY(1px)"
     />
   );
 }

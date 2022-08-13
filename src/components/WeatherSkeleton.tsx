@@ -11,7 +11,10 @@ interface WeatherSkeletonProps {
 export default function WeatherSkeleton({ timeOfDay }: WeatherSkeletonProps) {
   return (
     <div className="container weather skeleton">
-      <div className="title">Weather</div>
+      <div className="sub-title">Weather in</div>
+      <div className="title">
+        <Placeholder width="180px" height="3.5rem" />
+      </div>
 
       <hr />
 
@@ -22,6 +25,13 @@ export default function WeatherSkeleton({ timeOfDay }: WeatherSkeletonProps) {
           time={timeOfDay}
           status="unknown"
         />
+      </div>
+
+      <div className="description">
+        <div style={{ display: "flex", gap: "10px" } as React.CSSProperties}>
+          <Placeholder width="60px" height="2rem" />
+          <Placeholder width="40px" height="2rem" />
+        </div>
       </div>
 
       <div className="temperature">
@@ -38,23 +48,6 @@ export default function WeatherSkeleton({ timeOfDay }: WeatherSkeletonProps) {
             <Placeholder width="40px" height="29px" />
           </div>
         </span>
-      </div>
-
-      <div className="description">
-        <div style={{ display: "flex", gap: "10px" } as React.CSSProperties}>
-          <Placeholder width="60px" height="39px" />
-          <Placeholder width="40px" height="39px" />
-        </div>
-      </div>
-
-      <hr />
-
-      <div className="location">
-        <div style={{ display: "flex", gap: "10px" } as React.CSSProperties}>
-          <Placeholder width="70px" height="27px" />
-          <Placeholder width="90px" height="27px" />
-          <Placeholder width="30px" height="27px" />
-        </div>
       </div>
     </div>
   );
