@@ -1,7 +1,9 @@
 import * as idb from "idb-keyval";
 import { IDBCache } from "../types/IDBCache";
 import { version, hoursUntilStale } from "../app/config";
+import addHours from "../utils/addHours";
 import {
+  AppData,
   ForecastData,
   LocationData,
   makeFailed,
@@ -9,7 +11,6 @@ import {
   Optional,
   WeatherData,
 } from "../types";
-import addHours from "../utils/addHours";
 
 export interface CacheKeyMap {
   counter: number;
@@ -17,6 +18,7 @@ export interface CacheKeyMap {
   forecast: ForecastData[];
   location: LocationData;
   geolocation: GeolocationCoordinates;
+  appData: AppData;
 }
 
 export type CacheKey = keyof CacheKeyMap;
@@ -60,4 +62,8 @@ async function del<K extends keyof CacheKeyMap>(key: K) {
   return idb.del(key);
 }
 
-export { get, set, del };
+async function clear() {
+  return idb.clear();
+}
+
+export { get, set, del, clear };

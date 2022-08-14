@@ -1,15 +1,10 @@
 import { Handler } from "@netlify/functions";
 import fetch from "node-fetch";
+import { makeFailed, makeSuccessful } from "./utils/Optional";
 
-const requestTypes = ["location", "weather", "forecast"] as const;
+const requestTypes = ["location", "weather", "forecast", "all"] as const;
 
 type RequestType = typeof requestTypes[number];
-
-const requestTypesString: string = requestTypes.reduce((acc, curr, i) => {
-  if (i === 0) return `'${curr}`;
-  if (i < requestTypes.length - 1) return `${acc}, '${curr}'`;
-  return `${acc} or '${curr}'`;
-}, "");
 
 function isRequestType(value: string): value is RequestType {
   return requestTypes.includes(value as RequestType);
@@ -17,8 +12,10 @@ function isRequestType(value: string): value is RequestType {
 
 const apiKey = process.env.OPENWEATHER_API_KEY;
 
-export const routes: Readonly<Record<RequestType, Function>> = {
-  location: (lat: string, lon: string, limit = 5) =>
+export const routes: Readonly<
+  Record<string, (lat: string, lon: string) => string>
+> = {
+  location: (lat: string, lon: string, limit = 1) =>
     `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=${limit}&appid=${apiKey}`,
   weather: (lat: string, lon: string) =>
     `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`,
@@ -44,9 +41,37 @@ export const handler: Handler = async (event, context) => {
     return {
       statusCode: 422,
       body: JSON.stringify({
-        message: `Request parameter 'type' must be one of the following: ${requestTypesString}`,
+        message: `Request parameter 'type' must be one of the following: ${requestTypes
+          .map((t) => `'${t}'`)
+          .join(", ")
+          .replace(/(, )(?='\w*'$)/, " or ")}`,
       }),
     };
+  }
+
+  if (requestType === "all") {
+    const response = await Promise.all(
+      Object.entries(routes).map(([key, route]) =>
+        fetch(route(lat, lon))
+          .then(async (res) => {
+            if (!res.ok) return makeFailed(`Could not fetch ${key}`);
+            const value = await res.json();
+            return makeSuccessful(value);
+          })
+          .then((option) => ({ [key]: option }))
+      )
+    )
+      .then((optionObjs) => Object.assign({}, ...optionObjs))
+      .then((value) => ({
+        statusCode: 200,
+        body: JSON.stringify(value),
+      }))
+      .catch((err) => ({
+        statusCode: 500,
+        body: err.message ?? "Internal error",
+      }));
+
+    return response;
   }
 
   const res = await fetch(routes[requestType](lat, lon));

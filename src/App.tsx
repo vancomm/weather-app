@@ -3,6 +3,7 @@ import produce from "immer";
 
 import WeatherIcon from "./components/WeatherIcon";
 import CalendarIcon from "./components/CalendarIcon";
+import GeolocationIcon from "./components/GeolocationIcon";
 import WeatherSkeleton from "./components/WeatherSkeleton";
 import ForecastSkeleton from "./components/ForecastPlaceholder";
 
@@ -10,7 +11,7 @@ import fetchWeather from "./helpers/fetchWeather";
 import fetchLocation from "./helpers/fetchLocation";
 import fetchForecast from "./helpers/fetchForecast";
 import getGeolocation from "./helpers/getGeolocation";
-import { CacheKeyMap, get, set } from "./helpers/cacheHelper";
+import { CacheKeyMap, clear, get, set } from "./helpers/cacheHelper";
 
 import isDev from "./utils/isDev";
 import formatDate from "./utils/formatDate";
@@ -33,7 +34,6 @@ import {
 } from "./types";
 
 import "./App.css";
-import GeolocationIcon from "./components/GeolocationIcon";
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -85,6 +85,21 @@ export default function App() {
     return valueOption;
   };
 
+  // const _fetchData = async (): Promise<Optional<AppData>> => {
+  //   const cacheOption = await get("appData");
+  //   if (isSuccessful(cacheOption)) return cacheOption;
+  //   const geolocationOption = await getGeolocation();
+  //   if (!isSuccessful(geolocationOption)) return geolocationOption;
+  //   const { latitude, longitude } = geolocationOption.value;
+  //   return Promise.all([
+  //     fetchLocation(latitude, longitude),
+  //     fetchWeather(latitude, longitude),
+  //     fetchForecast(latitude, longitude),
+  //   ]).then(([locationOption, weatherOption, forecastOption]) => {
+  //     if (!isSuccessful(lo))
+  //   });
+  // };
+
   const fetchData = useCallback(async () => {
     const geolocationOption = await tryGetCachedValue(
       "geolocation",
@@ -104,7 +119,7 @@ export default function App() {
     setTimeOfDay(timeOfDay);
     setMoonPhase(moonPhase);
 
-    Promise.all([
+    return Promise.all([
       tryGetCachedValue("location", () =>
         fetchLocation(latitude, longitude)
       ).then(handleOption(setLocationData, appendNotification)),
@@ -164,15 +179,15 @@ export default function App() {
   return (
     <div className="app">
       {isDev() && (
-        <div style={{ display: "flex", gap: "0.2rem" }}>
-          <button
-            onClick={() => setIsLoading(!isLoading)}
-            style={{ color: "black" }}
-          >
+        <div className="dev-btns">
+          <button className="dev-btn" onClick={() => setIsLoading(!isLoading)}>
             {isLoading ? "loading" : "not loading"}
           </button>
-          <button onClick={swapTimeOfDay} style={{ color: "black" }}>
+          <button className="dev-btn" onClick={swapTimeOfDay}>
             {timeOfDay}
+          </button>
+          <button className="dev-btn danger" onClick={() => clear()}>
+            clear cache
           </button>
         </div>
       )}
@@ -183,7 +198,7 @@ export default function App() {
         <div className="container weather">
           <div className="sub-title">Weather in</div>
           <div className="title">
-            {formatLocationData(locationData)}
+            <div className="location">{formatLocationData(locationData)}</div>
             <GeolocationIcon width={"20px"} height={"20px"} />
           </div>
 

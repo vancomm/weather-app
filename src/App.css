@@ -158,15 +158,18 @@ hr {
 
 .weather .sub-title {
   font-size: 1.5rem;
-  /* color: var(--font-secondary); */
 }
 
 .weather .title {
-  font-size: 3rem;
   padding-top: 0.5rem;
   display: flex;
+  justify-items: center;
   align-items: center;
   gap: 0.5rem;
+}
+
+.weather .title .location {
+  font-size: 3rem;
 }
 
 .weather .notification {
@@ -226,12 +229,6 @@ hr {
 .weather .description {
   font-size: 2rem;
   margin: 0.5rem 0;
-  text-align: center;
-}
-
-.weather .location {
-  font-size: 1.4rem;
-  margin-top: 1rem;
   text-align: center;
 }
 
@@ -323,4 +320,42 @@ hr {
 
 .credits a:hover {
   color: var(--font-primary);
+}
+
+
+
+.dev-btns {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dev-btn {
+  padding: 6px;
+  background-color: var(--bg-container);
+  border: none;
+  border-radius: 5px;
+  color: var(--font-primary);
+  font-size: 1rem;
+}
+
+.night .dev-btn {
+  background-color: var(--bg-container-night);
+}
+
+.dev-btn.danger {
+  background-color: #ff4e4e;
+  color: white;
+}
+
+.dev-btn:hover {
+  cursor: pointer;
+  background-color: var(--bg-container-overlay);
+}
+
+.night .dev-btn:hover {
+  background-color: var(--bg-container-overlay-night);
+}
+
+.dev-btn.danger:hover {
+  background-color: #b83737;
 }

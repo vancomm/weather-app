@@ -14,3 +14,4 @@ export * from "./Favicon";
 export * from "./MoonPhase";
 export * from "./OpenWeatherRequestType";
 export * from "./CitiesResponse";
+export * from "./AppData";
