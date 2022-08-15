@@ -1,0 +1,11 @@
+.notification {
+  background: var(--bg-container);
+  padding: 0.5rem 1rem 0.3rem;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.night.notification {
+  background: var(--bg-container-night);
+}

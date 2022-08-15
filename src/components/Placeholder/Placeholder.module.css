@@ -19,14 +19,14 @@
   }
 }
 
-.bg-animation {
+.bgAnimation {
   height: inherit;
   animation: 1.25s placeholder-shimmer infinite forwards linear;
   background: linear-gradient(to right, var(--ph-secondary) 10%, var(--ph-primary) 18%, var(--ph-secondary) 33%);
   background-size: 800px 104px;
 }
 
-.night .bg-animation {
+.night.bgAnimation {
   height: inherit;
   animation: 1.25s placeholder-shimmer infinite forwards linear;
   background: linear-gradient(to right, var(--ph-secondary-night) 10%, var(--ph-primary-night) 18%, var(--ph-secondary-night) 33%);

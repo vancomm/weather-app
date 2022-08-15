@@ -1,0 +1,7 @@
+.calendarIcon {
+  fill: var(--font-secondary);
+}
+
+.calendarIcon.night {
+  fill: var(--font-secondary-night);
+}

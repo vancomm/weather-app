@@ -1,6 +1,6 @@
 import { WeatherIconId } from "./WeatherIconId";
 
-export interface WeatherResponse {
+export interface CurrentWeatherResponse {
   coord: Coord;
   weather: Weather[];
   base: string;

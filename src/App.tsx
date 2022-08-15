@@ -1,17 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useState } from "react";
 import produce from "immer";
 
 import WeatherIcon from "./components/WeatherIcon";
+import Notification from "./components/Notification";
 import CalendarIcon from "./components/CalendarIcon";
 import GeolocationIcon from "./components/GeolocationIcon";
 import WeatherSkeleton from "./components/WeatherSkeleton";
-import ForecastSkeleton from "./components/ForecastPlaceholder";
+import ForecastSkeleton from "./components/ForecastSkeleton";
 
-import fetchWeather from "./helpers/fetchWeather";
-import fetchLocation from "./helpers/fetchLocation";
-import fetchForecast from "./helpers/fetchForecast";
 import getGeolocation from "./helpers/getGeolocation";
-import { CacheKeyMap, clear, get, set } from "./helpers/cacheHelper";
+import fetchEverything from "./helpers/fetchWeatherData";
+import { clear, get, set } from "./helpers/cacheHelper";
 
 import isDev from "./utils/isDev";
 import formatDate from "./utils/formatDate";
@@ -23,31 +23,46 @@ import { moonPhaseToFavicon, statusToFavicon } from "./utils/constants";
 
 import {
   TimeOfDay,
-  WeatherData,
+  CurrentWeatherData,
   ForecastData,
   LocationData,
   TemperatureUnit,
   MoonPhase,
   isSuccessful,
-  Optional,
   handleOption,
+  AppData,
+  makeSuccessful,
 } from "./types";
 
 import "./App.css";
+import ReloadButton from "./components/ReloadButton";
+import { useTheme } from "./contexts/ThemeContext";
 
 export default function App() {
+  const { theme, setTheme } = useTheme();
+
+  const { timeOfDay } = theme;
+  const setTimeOfDay = useCallback(
+    (value: TimeOfDay) =>
+      setTheme(
+        produce(theme, (draft) => {
+          draft.timeOfDay = value;
+        })
+      ),
+    []
+  );
+
   const [isLoading, setIsLoading] = useState(true);
+  const [showGeoIcon, setShowGeoIcon] = useState(false);
   const [units, setUnits] = useState<TemperatureUnit>("C");
   const [notifications, setNotifications] = useState<string[]>([]);
 
-  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("day");
   const [moonPhase, setMoonPhase] = useState<MoonPhase>("Full");
 
-  // const [geolocation, setGeolocation] = useState<GeolocationCoordinates>();
-
-  const [weatherData, setWeatherData] = useState<WeatherData>();
+  const [currentweatherData, setCurrentWeatherData] =
+    useState<CurrentWeatherData>();
   const [locationData, setLocationData] = useState<LocationData>();
-  const [forecastData, setForecastData] = useState<ForecastData[]>();
+  const [forecastData, setForecastData] = useState<ForecastData>();
 
   const swapUnits = () => {
     setUnits(units === "C" ? "F" : "C");
@@ -56,6 +71,10 @@ export default function App() {
   const swapTimeOfDay = () => {
     if (!isDev()) return;
     setTimeOfDay(timeOfDay === "day" ? "night" : "day");
+  };
+
+  const clearNotifications = () => {
+    setNotifications([]);
   };
 
   const appendNotification = (message: string) => {
@@ -67,122 +86,110 @@ export default function App() {
     );
   };
 
-  const tryGetCachedValue = async <
-    K extends keyof CacheKeyMap,
-    T extends CacheKeyMap[K]
-  >(
-    cacheKey: K,
-    fallbackFn?: () => Promise<Optional<T>>
-  ): Promise<Optional<T>> => {
-    const cacheOption = await get<K, T>(cacheKey);
-
-    if (isSuccessful(cacheOption) || !fallbackFn) return cacheOption;
-
-    const valueOption = await fallbackFn();
-
-    if (isSuccessful(valueOption)) set(cacheKey, valueOption.value);
-
-    return valueOption;
-  };
-
-  // const _fetchData = async (): Promise<Optional<AppData>> => {
-  //   const cacheOption = await get("appData");
-  //   if (isSuccessful(cacheOption)) return cacheOption;
-  //   const geolocationOption = await getGeolocation();
-  //   if (!isSuccessful(geolocationOption)) return geolocationOption;
-  //   const { latitude, longitude } = geolocationOption.value;
-  //   return Promise.all([
-  //     fetchLocation(latitude, longitude),
-  //     fetchWeather(latitude, longitude),
-  //     fetchForecast(latitude, longitude),
-  //   ]).then(([locationOption, weatherOption, forecastOption]) => {
-  //     if (!isSuccessful(lo))
-  //   });
-  // };
-
   const fetchData = useCallback(async () => {
-    const geolocationOption = await tryGetCachedValue(
-      "geolocation",
-      getGeolocation
-    );
+    const cacheOption = await get("appData");
 
-    if (!isSuccessful(geolocationOption)) {
-      appendNotification(geolocationOption.message);
-      return;
-    }
+    if (isSuccessful(cacheOption)) return cacheOption;
+
+    const geolocationOption = await getGeolocation();
+
+    if (!isSuccessful(geolocationOption)) return geolocationOption;
+
+    setShowGeoIcon(true);
 
     const { latitude, longitude } = geolocationOption.value;
 
-    const moonPhase = getMoonPhase().name;
-    const timeOfDay = getTimeOfDay(latitude, longitude);
+    const everythingOption = await fetchEverything(latitude, longitude);
 
-    setTimeOfDay(timeOfDay);
-    setMoonPhase(moonPhase);
+    if (!isSuccessful(everythingOption)) return everythingOption;
 
-    return Promise.all([
-      tryGetCachedValue("location", () =>
-        fetchLocation(latitude, longitude)
-      ).then(handleOption(setLocationData, appendNotification)),
-      tryGetCachedValue("weather", () =>
-        fetchWeather(latitude, longitude)
-      ).then(handleOption(setWeatherData, appendNotification)),
-      tryGetCachedValue("forecast", () =>
-        fetchForecast(latitude, longitude)
-      ).then(handleOption(setForecastData, appendNotification)),
-    ]);
+    const appData = {
+      geolocation: geolocationOption.value,
+      ...everythingOption.value,
+    };
+
+    set("appData", appData);
+
+    return makeSuccessful(appData);
   }, []);
 
+  const setData = useCallback(
+    (data: AppData) => {
+      const { geolocation, location, current, forecast } = data;
+      const { latitude, longitude } = geolocation;
+
+      const moonPhase = getMoonPhase().name;
+      const timeOfDay = getTimeOfDay(latitude, longitude);
+
+      setTimeOfDay(timeOfDay);
+      setMoonPhase(moonPhase);
+
+      setLocationData(location);
+      setCurrentWeatherData(current);
+      setForecastData(forecast);
+    },
+    [setTimeOfDay]
+  );
+
   useEffect(() => {
-    setNotifications([]);
+    clearNotifications();
     setIsLoading(true);
+    setShowGeoIcon(false);
 
-    fetchData().then(() => setIsLoading(false));
-  }, [fetchData]);
+    fetchData()
+      .then(handleOption(setData, appendNotification))
+      .then(() => setIsLoading(false));
+  }, [fetchData, setData]);
 
   useEffect(() => {
-    if (!weatherData) return;
-
     const title = document.querySelector("title");
     const favicon16 = document.querySelector("link#favicon-16");
     const favicon32 = document.querySelector("link#favicon-32");
     const favicon180 = document.querySelector("link#favicon-180");
 
-    const icon =
-      timeOfDay === "night" && weatherData.status === "sunny"
-        ? moonPhaseToFavicon[moonPhase]
-        : statusToFavicon[weatherData.status];
+    if (currentweatherData) {
+      const icon =
+        timeOfDay === "night"
+          ? moonPhaseToFavicon[moonPhase]
+          : statusToFavicon[currentweatherData.status];
 
-    title!.innerText = locationData?.name ?? "Weather";
+      title!.innerText = locationData?.name ?? "Weather";
 
-    favicon16?.setAttribute(
-      "href",
-      `${process.env.PUBLIC_URL}/favicons/16/${icon}`
-    );
+      favicon16?.setAttribute(
+        "href",
+        `${process.env.PUBLIC_URL}/favicons/16/${icon}`
+      );
 
-    favicon32?.setAttribute(
-      "href",
-      `${process.env.PUBLIC_URL}/favicons/32/${icon}`
-    );
+      favicon32?.setAttribute(
+        "href",
+        `${process.env.PUBLIC_URL}/favicons/32/${icon}`
+      );
 
-    favicon180?.setAttribute(
-      "href",
-      `${process.env.PUBLIC_URL}/favicons/180/${icon}`
-    );
+      favicon180?.setAttribute(
+        "href",
+        `${process.env.PUBLIC_URL}/favicons/180/${icon}`
+      );
+    }
 
     if (timeOfDay === "night") {
       document.querySelector("html")!.classList.add("night");
     } else {
       document.querySelector("html")!.classList.remove("night");
     }
-  }, [locationData, moonPhase, timeOfDay, weatherData]);
+  }, [locationData, moonPhase, timeOfDay, currentweatherData]);
 
   return (
     <div className="app">
       {isDev() && (
         <div className="dev-btns">
-          <button className="dev-btn" onClick={() => setIsLoading(!isLoading)}>
-            {isLoading ? "loading" : "not loading"}
-          </button>
+          <div className="dev-btn" onClick={() => setIsLoading(!isLoading)}>
+            <input
+              type="checkbox"
+              checked={isLoading}
+              onChange={() => setIsLoading(!isLoading)}
+            />
+            loading
+          </div>
           <button className="dev-btn" onClick={swapTimeOfDay}>
             {timeOfDay}
           </button>
@@ -192,6 +199,10 @@ export default function App() {
         </div>
       )}
 
+      {notifications?.map((message, i) => (
+        <Notification key={i}>{message}</Notification>
+      ))}
+
       {isLoading ? (
         <WeatherSkeleton timeOfDay={timeOfDay} />
       ) : (
@@ -199,34 +210,29 @@ export default function App() {
           <div className="sub-title">Weather in</div>
           <div className="title">
             <div className="location">{formatLocationData(locationData)}</div>
-            <GeolocationIcon width={"20px"} height={"20px"} />
+            {showGeoIcon && <GeolocationIcon width={"20px"} height={"20px"} />}
+            {!showGeoIcon && <ReloadButton />}
           </div>
 
           <hr />
-
-          {notifications?.map((message, i) => (
-            <div key={i} className="notification">
-              {message}
-            </div>
-          ))}
 
           <div className="weather-icon">
             <WeatherIcon
               size={256}
               variant="white"
               time={timeOfDay}
-              status={weatherData?.status ?? "unknown"}
+              status={currentweatherData?.status ?? "unknown"}
             />
           </div>
 
           <div className="description">
-            <span>{weatherData?.description ?? "--"}</span>
+            <span>{currentweatherData?.description ?? "--"}</span>
           </div>
 
           <div className="temperature">
             <span className="value">
-              {weatherData
-                ? formatTemperature(weatherData.temperature, units)
+              {currentweatherData
+                ? formatTemperature(currentweatherData.temperature, units)
                 : "--"}
               {"°"}
             </span>
@@ -240,8 +246,8 @@ export default function App() {
           <div className="feels-like">
             <span className="value">
               feels like{" "}
-              {weatherData
-                ? formatTemperature(weatherData.temperature, units)
+              {currentweatherData
+                ? formatTemperature(currentweatherData.temperature, units)
                 : "--"}
               {"°"}
             </span>

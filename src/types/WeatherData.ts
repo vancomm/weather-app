@@ -1,10 +1,9 @@
-import { WeatherStatus } from "./WeatherStatus";
+import { CurrentWeatherData } from "./CurrentWeatherData";
+import { ForecastData } from "./ForecastData";
+import { LocationData } from "./LocationData";
 
 export interface WeatherData {
-  temperature: number;
-  feelsLike: number;
-  tempMax: number;
-  tempMin: number;
-  status: WeatherStatus;
-  description: string;
+  current: CurrentWeatherData;
+  forecast: ForecastData;
+  location: LocationData;
 }

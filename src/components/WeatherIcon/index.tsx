@@ -1,7 +1,7 @@
 import cn from "classnames";
 import React from "react";
-import { TimeOfDay, WeatherStatus } from "../types";
-import "../assets/styles/wu-icons-style.css";
+import { TimeOfDay, WeatherStatus } from "../../types";
+import "./WeatherIcon.css";
 
 interface WeatherIconProps {
   variant: "black" | "white" | "solid-black" | "solid-white";
@@ -22,6 +22,6 @@ export default function WeatherIcon({
         "wu-night": time === "night",
       })}
       style={{ "--size": `${size}px` } as React.CSSProperties}
-    ></div>
+    />
   );
 }

@@ -1,6 +1,8 @@
 import { WeatherStatus } from "./WeatherStatus";
 
-export interface ForecastData {
+export type ForecastData = ForecastItem[];
+
+interface ForecastItem {
   date: Date;
   tempMin: number;
   tempMax: number;

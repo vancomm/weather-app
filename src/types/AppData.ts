@@ -1,10 +1,5 @@
-import { ForecastData } from "./ForecastData";
-import { LocationData } from "./LocationData";
 import { WeatherData } from "./WeatherData";
 
-export interface AppData {
+export interface AppData extends WeatherData {
   geolocation: GeolocationCoordinates;
-  weather: WeatherData;
-  forecast: ForecastData[];
-  location: LocationData;
 }

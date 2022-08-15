@@ -106,6 +106,11 @@ hr {
   text-transform: uppercase;
   font-size: 0.9rem;
   font-weight: bold;
+  transform: translateY(2px);
+}
+
+.night .container .header span {
+  color: var(--font-secondary-night);
 }
 
 @keyframes fadein {
@@ -137,21 +142,6 @@ hr {
 
 
 
-.spinner {
-  display: none;
-}
-
-.loading .spinner {
-  position: absolute;
-  display: block;
-  z-index: 100;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-
-
 .weather hr {
   margin: 8px;
 }
@@ -170,19 +160,6 @@ hr {
 
 .weather .title .location {
   font-size: 3rem;
-}
-
-.weather .notification {
-  background: var(--bg-container-overlay);
-  margin-top: 0.5rem;
-  padding: 0.5rem 1rem 0.3rem;
-  border-radius: 10px;
-  font-size: 1.2rem;
-  text-align: center;
-}
-
-.night .weather .notification {
-  background: var(--bg-container-overlay-night);
 }
 
 .weather .temperature {
@@ -235,9 +212,14 @@ hr {
 
 
 .forecast {
-  gap: 5px;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  /* gap: 5px; */
+  padding-top: 0;
+  padding-bottom: 0.5rem;
+}
+
+.forecast .header {
+  margin-top: 0.5rem;
+  height: 2rem;
 }
 
 .night .forecast .header span {
@@ -263,6 +245,8 @@ hr {
 
 .forecast .row {
   width: 100%;
+  margin-bottom: 0.3rem;
+  margin-top: 0.5rem;
   display: grid;
   grid-template-columns: auto 48px 43px 43px;
   column-gap: 0.5rem;

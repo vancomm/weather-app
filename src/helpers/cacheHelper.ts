@@ -2,22 +2,9 @@ import * as idb from "idb-keyval";
 import { IDBCache } from "../types/IDBCache";
 import { version, hoursUntilStale } from "../app/config";
 import addHours from "../utils/addHours";
-import {
-  AppData,
-  ForecastData,
-  LocationData,
-  makeFailed,
-  makeSuccessful,
-  Optional,
-  WeatherData,
-} from "../types";
+import { AppData, makeFailed, makeSuccessful, Optional } from "../types";
 
 export interface CacheKeyMap {
-  counter: number;
-  weather: WeatherData;
-  forecast: ForecastData[];
-  location: LocationData;
-  geolocation: GeolocationCoordinates;
   appData: AppData;
 }
 
