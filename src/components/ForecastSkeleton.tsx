@@ -2,13 +2,13 @@ import React from "react";
 import CalendarIcon from "./CalendarIcon";
 import Placeholder from "./Placeholder";
 import WeatherIcon from "./WeatherIcon";
-import { TimeOfDay } from "../types";
+import { useTheme } from "../contexts/ThemeContext";
 
-interface ForecastSkeletonProps {
-  timeOfDay: TimeOfDay;
-}
+export default function ForecastSkeleton() {
+  const {
+    theme: { timeOfDay },
+  } = useTheme();
 
-export default function ForecastSkeleton({ timeOfDay }: ForecastSkeletonProps) {
   return (
     <div className="container forecast skeleton">
       <div className="header">

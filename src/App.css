@@ -17,8 +17,23 @@
   --font-secondary-night: rgba(255, 255, 255, 0.45);
 }
 
-html {
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  color: var(--font-primary);
+}
+
+
+
+.app {
   min-height: 100%;
+  padding: 2rem 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -32,33 +47,13 @@ html {
   background-image: linear-gradient(var(--bg-start), var(--bg-end));
 }
 
-html.night {
+.app.night {
   background-image: -webkit-linear-gradient(var(--bg-start-night), var(--bg-end-night));
   background-image: -moz-linear-gradient(var(--bg-start-night), var(--bg-end-night));
   background-image: -ms-linear-gradient(var(--bg-start-night), var(--bg-end-night));
   background-image: -o-linear-gradient(var(--bg-start-night), var(--bg-end-night));
   background-image: linear-gradient(var(--bg-start-night), var(--bg-end-night));
 }
-
-*,
-*::after,
-*::before {
-  box-sizing: border-box;
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  color: var(--font-primary);
-}
-
-
-
-.app {
-  height: 100%;
-  padding: 2rem 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
-
 
 
 

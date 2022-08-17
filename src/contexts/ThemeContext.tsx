@@ -9,7 +9,7 @@ const defaultTheme: Theme = { timeOfDay: "day" };
 
 export interface IThemeContext {
   theme: Theme;
-  setTheme: (theme: Theme) => void;
+  setTheme: (value: React.SetStateAction<Theme>) => void;
 }
 
 const ThemeContext = createContext<IThemeContext | null>(null);

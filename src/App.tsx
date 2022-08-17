@@ -1,10 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useState } from "react";
-import produce from "immer";
+
+import { useTheme } from "./contexts/ThemeContext";
 
 import WeatherIcon from "./components/WeatherIcon";
-import Notification from "./components/Notification";
 import CalendarIcon from "./components/CalendarIcon";
+import Notification from "./components/Notification";
+import ReloadButton from "./components/ReloadButton";
 import GeolocationIcon from "./components/GeolocationIcon";
 import WeatherSkeleton from "./components/WeatherSkeleton";
 import ForecastSkeleton from "./components/ForecastSkeleton";
@@ -35,25 +36,24 @@ import {
 } from "./types";
 
 import "./App.css";
-import ReloadButton from "./components/ReloadButton";
-import { useTheme } from "./contexts/ThemeContext";
+import cn from "classnames";
 
 export default function App() {
-  const { theme, setTheme } = useTheme();
+  const {
+    theme: { timeOfDay },
+    setTheme,
+  } = useTheme();
 
-  const { timeOfDay } = theme;
   const setTimeOfDay = useCallback(
-    (value: TimeOfDay) =>
-      setTheme(
-        produce(theme, (draft) => {
-          draft.timeOfDay = value;
-        })
-      ),
-    []
+    (value: TimeOfDay) => {
+      setTheme((theme) => ({ ...theme, timeOfDay: value }));
+    },
+    [setTheme]
   );
 
   const [isLoading, setIsLoading] = useState(true);
   const [showGeoIcon, setShowGeoIcon] = useState(false);
+
   const [units, setUnits] = useState<TemperatureUnit>("C");
   const [notifications, setNotifications] = useState<string[]>([]);
 
@@ -65,11 +65,10 @@ export default function App() {
   const [forecastData, setForecastData] = useState<ForecastData>();
 
   const swapUnits = () => {
-    setUnits(units === "C" ? "F" : "C");
+    setUnits((state) => (state === "C" ? "F" : "C"));
   };
 
   const swapTimeOfDay = () => {
-    if (!isDev()) return;
     setTimeOfDay(timeOfDay === "day" ? "night" : "day");
   };
 
@@ -78,11 +77,8 @@ export default function App() {
   };
 
   const appendNotification = (message: string) => {
-    setNotifications(
-      produce((state) => {
-        if (state.includes(message)) return;
-        state.push(message);
-      })
+    setNotifications((state) =>
+      state.includes(message) ? state : [...state, message]
     );
   };
 
@@ -94,8 +90,6 @@ export default function App() {
     const geolocationOption = await getGeolocation();
 
     if (!isSuccessful(geolocationOption)) return geolocationOption;
-
-    setShowGeoIcon(true);
 
     const { latitude, longitude } = geolocationOption.value;
 
@@ -123,6 +117,7 @@ export default function App() {
 
       setTimeOfDay(timeOfDay);
       setMoonPhase(moonPhase);
+      setShowGeoIcon(true);
 
       setLocationData(location);
       setCurrentWeatherData(current);
@@ -170,16 +165,10 @@ export default function App() {
         `${process.env.PUBLIC_URL}/favicons/180/${icon}`
       );
     }
-
-    if (timeOfDay === "night") {
-      document.querySelector("html")!.classList.add("night");
-    } else {
-      document.querySelector("html")!.classList.remove("night");
-    }
   }, [locationData, moonPhase, timeOfDay, currentweatherData]);
 
   return (
-    <div className="app">
+    <div className={cn("app", { night: timeOfDay === "night" })}>
       {isDev() && (
         <div className="dev-btns">
           <div className="dev-btn" onClick={() => setIsLoading(!isLoading)}>
@@ -204,7 +193,7 @@ export default function App() {
       ))}
 
       {isLoading ? (
-        <WeatherSkeleton timeOfDay={timeOfDay} />
+        <WeatherSkeleton />
       ) : (
         <div className="container weather">
           <div className="sub-title">Weather in</div>
@@ -257,7 +246,7 @@ export default function App() {
       )}
 
       {isLoading ? (
-        <ForecastSkeleton timeOfDay={timeOfDay} />
+        <ForecastSkeleton />
       ) : (
         <div className="container forecast">
           <div className="header">

@@ -15,7 +15,7 @@
   - [x] dim background
   - [x] use horizontal bars as text placeholder
 - [x] dumb down rain prediction value
-- [ ] refactor svgs to use "fill: current"
+- [x] refactor svgs to use "fill: current"
 
 
 
@@ -29,7 +29,7 @@
 - [ ] make min/max temperature more clear
 - [x] move location name to title 
 - [x] add a geolocation symbol next to location name 
-  - [ ] (when using geolocation!)
+  - [x] (when using geolocation!)
 
 - [x] move weather description below weather icon and above temperature
 - [x] change forecast day naming from "today-fri-sat" to "today-tomorrow-sat"

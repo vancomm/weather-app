@@ -1,14 +1,14 @@
 import React from "react";
 import WeatherIcon from "./WeatherIcon";
 import Placeholder from "./Placeholder";
-import { TimeOfDay } from "../types";
+import { useTheme } from "../contexts/ThemeContext";
 import "../assets/styles/utility.css";
 
-interface WeatherSkeletonProps {
-  timeOfDay: TimeOfDay;
-}
+export default function WeatherSkeleton() {
+  const {
+    theme: { timeOfDay },
+  } = useTheme();
 
-export default function WeatherSkeleton({ timeOfDay }: WeatherSkeletonProps) {
   return (
     <div className="container weather skeleton">
       <div className="sub-title">Weather in</div>
