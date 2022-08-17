@@ -37,6 +37,7 @@ import {
 
 import "./App.css";
 import cn from "classnames";
+import log from "./utils/log";
 
 export default function App() {
   const {
@@ -93,12 +94,14 @@ export default function App() {
 
     const { latitude, longitude } = geolocationOption.value;
 
+    log(geolocationOption.value);
+
     const everythingOption = await fetchEverything(latitude, longitude);
 
     if (!isSuccessful(everythingOption)) return everythingOption;
 
     const appData = {
-      geolocation: geolocationOption.value,
+      coordinates: { latitude, longitude },
       ...everythingOption.value,
     };
 
@@ -109,8 +112,8 @@ export default function App() {
 
   const setData = useCallback(
     (data: AppData) => {
-      const { geolocation, location, current, forecast } = data;
-      const { latitude, longitude } = geolocation;
+      const { coordinates, location, current, forecast } = data;
+      const { latitude, longitude } = coordinates;
 
       const moonPhase = getMoonPhase().name;
       const timeOfDay = getTimeOfDay(latitude, longitude);

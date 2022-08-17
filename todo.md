@@ -16,6 +16,7 @@
   - [x] use horizontal bars as text placeholder
 - [x] dumb down rain prediction value
 - [x] refactor svgs to use "fill: current"
+- [ ] show rain icon w/o probability when probability is 100%
 
 
 

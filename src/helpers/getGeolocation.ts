@@ -5,7 +5,8 @@ export default async function getGeolocation() {
   return new Promise<Optional<GeolocationCoordinates>>((resolve) => {
     navigator.geolocation.getCurrentPosition(
       (position) => resolve(makeSuccessful(position.coords)),
-      () => resolve(makeFailed("Location access blocked"))
+      () => resolve(makeFailed("Location access blocked")),
+      { timeout: 10000, enableHighAccuracy: true }
     );
   });
 }
